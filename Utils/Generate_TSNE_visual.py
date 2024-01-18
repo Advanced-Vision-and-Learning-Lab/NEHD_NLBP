@@ -12,7 +12,6 @@ import torch
 from matplotlib import offsetbox
 from Utils.Compute_FDR import Compute_Fisher_Score
 from sklearn.model_selection import train_test_split
-import pdb
 
 def plot_components(data, proj, images=None, ax=None,
                     thumb_frac=0.05, cmap='Greys'):
