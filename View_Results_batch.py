@@ -73,7 +73,7 @@ def main(args, params):
     #Append base model (histogram_layer = None)
     settings.append(settings[-1])
     
-    for setting in settings[setting_count:]: # Testing something here (:setting_count+1) for parellelism
+    for setting in settings[setting_count:]: 
     
         #Set initial parameters
         if mode == 'config':
@@ -140,9 +140,6 @@ def main(args, params):
             test_pkl_file = open(sub_dir+'test_dict.pkl','rb')
             test_dict = pickle.load(test_pkl_file)
             test_pkl_file.close()
-         
-            #Remove pickle files
-            # del train_pkl_file, test_pkl_file
             
             
             #Initialize histogram layer based on type
@@ -187,9 +184,7 @@ def main(args, params):
 
             # Prepare dataloaders
             dataloaders_dict = Prepare_DataLoaders(Results_parameters)
-                                   # mean=Results_parameters['mean'][Dataset],
-                                   # std=Results_parameters['std'][Dataset])
-            # model_ft = histogram_layer
+
             model = initialize_model(Results_parameters,dataloaders_dict, device,
                                         num_classes= Results_parameters['num_classes'][Dataset],
                                         reconstruction=Results_parameters['reconstruction'],
@@ -254,25 +249,13 @@ def main(args, params):
                                   train_dict['val_error_track'],
                                   train_dict['best_epoch'],
                                   sub_dir)
-    
-            # TO DO IMPLEMENT CLASSIFIER
-            # classifier_accuracies = Classifier_Evaluation(dataloaders_dict,model,sub_dir,device,class_names)
-            # KNN_acc[split] = classifier_accuracies[0]
-            # SVM_acc[split] = classifier_accuracies[1]
-            # XGB_acc[split] = classifier_accuracies[2]
 
-
-            #Compute crisp histogram visuals
-            # TO DO FIX THIS
-            '''
-            if Results_parameters['histogram']:
-                dataloaders_dict = Prepare_DataLoaders(Results_parameters)
-                Generate_Histogram_visual(dataloaders_dict,model,sub_dir,device,class_names,
-                                  Results_parameters,img_max=3,
-                                  mean=Results_parameters['mean'][Dataset], 
-                                  std=Results_parameters['std'][Dataset],
-                                  feature=Results_parameters['feature'])
-            '''
+            # Classifiers
+            if include_classifier_outputs:
+                classifier_accuracies = Classifier_Evaluation(dataloaders_dict,model,sub_dir,device,class_names)
+                KNN_acc[split] = classifier_accuracies[0]
+                SVM_acc[split] = classifier_accuracies[1]
+                XGB_acc[split] = classifier_accuracies[2]
                 
             print("Done!") ###
             
@@ -300,9 +283,10 @@ def main(args, params):
             save_metric(sub_dir,'Train_Accuracy',train_acc[split])
             save_metric(sub_dir, 'Val_Accuracy', val_acc[split])
             save_metric(sub_dir, 'MCC', MCC[split])
-            # save_metric(sub_dir, 'KNN_Accuracy', KNN_acc)
-            # save_metric(sub_dir, 'SVM_Accuracy', SVM_acc)
-            # save_metric(sub_dir, 'XGB_Accuracy', XGB_acc)
+            if include_classifier_outputs:
+                save_metric(sub_dir, 'KNN_Accuracy', KNN_acc)
+                save_metric(sub_dir, 'SVM_Accuracy', SVM_acc)
+                save_metric(sub_dir, 'XGB_Accuracy', XGB_acc)
                     
         
             print('**********Run ' + str(split+1) + ' Finished**********')
@@ -322,9 +306,10 @@ def main(args, params):
         save_avg_std_metric(directory, 'Val_Accuracy', val_acc)
         save_avg_std_metric(directory, 'FDR', FDR_scores, axis=1)
         save_avg_std_metric(directory, 'Log_FDR', FDR_scores, axis=1)
-        # save_avg_std_metric(directory, 'KNN_Accuracy', KNN_acc)
-        # save_avg_std_metric(directory, 'SVM_Accuracy', SVM_acc)
-        # save_avg_std_metric(directory, 'XGB_Accuracy', XGB_acc)
+        if include_classifier_outputs:
+            save_avg_std_metric(directory, 'KNN_Accuracy', KNN_acc)
+            save_avg_std_metric(directory, 'SVM_Accuracy', SVM_acc)
+            save_avg_std_metric(directory, 'XGB_Accuracy', XGB_acc)
         
         np.savetxt((directory+'List_Loss.txt'),loss.reshape(-1,1),fmt='%.2f')
         
@@ -333,9 +318,10 @@ def main(args, params):
         np.savetxt((directory + 'List_MCC.txt'), MCC.reshape(-1, 1), fmt='%.2f')
         np.savetxt((directory + 'test_List_FDR_scores.txt'), FDR_scores, fmt='%.2E')
         np.savetxt((directory + 'test_List_log_FDR_scores.txt'), log_FDR_scores, fmt='%.2f')
-        # np.savetxt((directory + 'List_KNN_Accuracy.txt'), KNN_acc.reshape(-1, 1), fmt='%.2f')
-        # np.savetxt((directory + 'List_SVM_Accuracy.txt'), SVM_acc.reshape(-1, 1), fmt='%.2f')
-        # np.savetxt((directory + 'List_XGB_Accuracy.txt'), XGB_acc.reshape(-1, 1), fmt='%.2f')
+        if include_classifier_outputs:
+            np.savetxt((directory + 'List_KNN_Accuracy.txt'), KNN_acc.reshape(-1, 1), fmt='%.2f')
+            np.savetxt((directory + 'List_SVM_Accuracy.txt'), SVM_acc.reshape(-1, 1), fmt='%.2f')
+            np.savetxt((directory + 'List_XGB_Accuracy.txt'), XGB_acc.reshape(-1, 1), fmt='%.2f')
         plt.close("all")
         
         setting_count += 1
@@ -401,6 +387,8 @@ def parse_args():
                     help='Fusion method for n>1 channels (default: None); Options: None, grayscale, conv')
     parser.add_argument('--single_setting', default=False, action=argparse.BooleanOptionalAction,
                         help='Run a single setting')
+    parser.add_argument('--include_classifier_outputs', default=False, action=argparse.BooleanOptionalAction,
+                        help='True will include the classifier outputs')
     args = parser.parse_args()
     return args
 
