@@ -4,10 +4,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch
 
-#External libaries
-import pdb
-
-
 class Linear_Model(nn.Module):
     
     def __init__(self,num_ftrs,num_classes,device, feature_layer,reconstruction=False,
@@ -28,13 +24,11 @@ class Linear_Model(nn.Module):
         else:
             self.fc = nn.Linear(num_ftrs, num_classes)
 
-
-        ###
         if preprocess_layer is None:
             self.preprocess_layer = torch.nn.Sequential()
         else:
             self.preprocess_layer = preprocess_layer
-        ###
+
         
         
     def forward(self,x):
