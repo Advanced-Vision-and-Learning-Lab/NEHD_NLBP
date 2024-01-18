@@ -25,18 +25,6 @@ class LocalBinaryLayer(nn.Module):
         self.density = density
         self.LBP_max = 2 ** (self.n_points) - 1
         self.device = device
-        # self.learn_weighting = learn_weighting
-        
-
-        # if self.in_channels == 1:
-        #     self.single_channel_convert = nn.Sequential()
-        # else:
-        #     self.single_channel_convert = nn.Conv2d(in_channels,out_channels=1,kernel_size=1,bias=False)
-        #     self.single_channel_convert.weight.data = torch.ones(self.single_channel_convert.weight.data.shape)/in_channels
-        #     self.single_channel_convert.weight.data = self.single_channel_convert.weight.data.to(self.device)
-        #     if not(self.learn_weighting):
-        #         self.single_channel_convert.weight.requires_grad = False
-
     
     @dask.delayed
     def LBP(self,x):
@@ -56,11 +44,7 @@ class LocalBinaryLayer(nn.Module):
         hist = np.stack(hist, axis=0)
         return hist
         
-    def forward(self,x):
-       
-        #Convert to single channel
-        # x = self.single_channel_convert(x)
-        
+    def forward(self,x):    
         #Convert representation to integer to disable warning (look into disabling warning)
         #May need to use float as fair comparison with method
         x_npy = x.cpu().numpy()
@@ -82,12 +66,6 @@ class LocalBinaryLayer(nn.Module):
         lbp_newarr = np.asarray(lbp_list)
         lbp = torch.from_numpy(lbp_newarr)
         
-        # if channel == 1:
-        #     lbp = lbp.type(torch.float32).to(x.device).unsqueeze(-1).unsqueeze(-1)
-        # else:
-        #     lbp = lbp.type(torch.float32).to(x.device)
-        
-        #Change array from N x C x B to N x (CB) (match neural feature)
         #This will need to be updated if doing reconstruction
         lbp = torch.flatten(lbp,start_dim=1)
         lbp = lbp.type(torch.float32).to(x.device)
