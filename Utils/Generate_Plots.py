@@ -330,14 +330,12 @@ def plot_FMS(images,EHD_outputs,outputs,phase,epoch,Network_parameters,split,
         if epoch is not None:
             plt.suptitle('Epoch {} during {} phase'.format(epoch+1,phase))
             try:
-                # fig.savefig(filename+'Epoch_{}_Phase_{}_Image_{}.png'.format(epoch+1,phase,img),dpi=fig.dpi)
                 fig.savefig(filename+'Image_{}_Epoch_{}_Phase_{}.png'.format(img,epoch+1,phase),dpi=fig.dpi)
             except:
                 pass
         else:
             plt.suptitle('Best Epoch for {} phase'.format(phase))
             try:
-                # plt.savefig(filename+'Best_Epoch_Phase_{}_Image_{}.png'.format(phase,img),dpi=fig.dpi)
                 plt.savefig(filename+'Image_{}_Best_Epoch_Phase_{}.png'.format(img,phase),dpi=fig.dpi)
             except:
                 pass
