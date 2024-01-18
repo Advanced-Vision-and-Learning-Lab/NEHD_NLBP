@@ -47,7 +47,6 @@ def main(args,params):
     
     elif mode == 'kernel':
     #Kernel Settings
-        # settings = [[3,3],[7,7],[15,15],[31,31],[63,63]]
         settings = [[5,5]]
     else:
     #Dilation
@@ -60,19 +59,12 @@ def main(args,params):
     #Append base model (histogram_layer = None)
     settings.append(settings[-1])
     
-
-    # Goal here is to move params down to be outside of the settings loop
-    # Tasks: 1) Get the necessary parameters to collect the data
-    #        2) Call the dataset
     data_parameters = Parameters(args)
     Dataset = data_parameters['Dataset']
     # Create training and validation dataloaders
     dataloaders_dict = Prepare_DataLoaders(data_parameters)
-                                        #mean=data_parameters['mean'][Dataset],
-                                        #std=data_parameters['std'][Dataset])
-    
 
-    ### End Changes
+    
 
 
     #Need to update code to run baseline model
@@ -98,9 +90,6 @@ def main(args,params):
         #Check for base model
         if setting_count == (len(settings) - 1):
             Network_parameters['histogram'] = False
-        
-        #Name of dataset
-        # Dataset = Network_parameters['Dataset']
                                          
         #Number of runs and/or splits for dataset
         numRuns = Network_parameters['Splits'][Dataset]
@@ -125,13 +114,6 @@ def main(args,params):
             torch.cuda.manual_seed_all(split)
             print("Initializing Datasets and Dataloaders...")
             
-            # Create training and validation dataloaders
-            #dataloaders_dict = Prepare_DataLoaders(Network_parameters,split,
-            #                                   mean=Network_parameters['mean'][Dataset],
-            #                                   std=Network_parameters['std'][Dataset])
-            
-            #Keep track of the bins and widths as these values are updated each
-            #epoch ##########
             if (Network_parameters['learn_transform'] or Network_parameters['feature'] == 'LBP'):
                 saved_bins = np.zeros((Network_parameters['num_epochs']+1, int(Network_parameters['in_channels']) *int(num_feature_maps)))
                 saved_widths =  np.zeros((Network_parameters['num_epochs']+1,int(Network_parameters['in_channels']) * int(num_feature_maps)))
@@ -177,21 +159,8 @@ def main(args,params):
             else:
                 if Network_parameters['feature'] == 'EHD': 
                      histogram_layer = None
-                    # histogram_layer = EHD_Layer(Network_parameters['in_channels'], Network_parameters['angle_res'], 
-                    #                             Network_parameters['normalize_kernel'],
-                    #                             Network_parameters['dilation'], Network_parameters['threshold'], 
-                    #                             Network_parameters['window_size'], Network_parameters['stride'], 
-                    #                             Network_parameters['normalize_count'],
-                    #                             Network_parameters['aggregation_type'], 
-                    #                             kernel_size= Network_parameters['mask_size'], device = device)
                 elif Network_parameters['feature'] == 'LBP':
                     histogram_layer = None
-                    # histogram_layer = LocalBinaryLayer(Network_parameters['in_channels'],radius=Network_parameters['R'],
-                    #                                 n_points = Network_parameters['P'],
-                    #                                 method = Network_parameters['LBP_method'],
-                    #                                 num_bins = Network_parameters['numBins'],
-                    #                                 density = Network_parameters['normalize_count'],
-                    #                                 device = device)
             
         
             # model_ft = histogram_layer
@@ -262,7 +231,6 @@ def main(args,params):
                 else:
                     pass
              
-            # pdb.set_trace()
             if(Network_parameters['histogram']):
                 print('**********Run ' + str(split + 1) + ' For ' + Network_parameters['hist_model'] + ' Finished**********') 
             else:
