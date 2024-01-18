@@ -9,8 +9,6 @@ from Utils.NLBP import NLBPLayer
 from Utils.NEHD import NEHDLayer
 import pdb
 
-#May need to revisit for LBP
-
 def get_feat_size(parameters, dataloaders, preprocess_layer = None, histogram_layer=None):
     
     #If base model, define histogram layer based on features
@@ -34,10 +32,6 @@ def get_feat_size(parameters, dataloaders, preprocess_layer = None, histogram_la
             
             # #Base model is global histogram layer for now (update later to local)
             out_size = parameters['out_channels'] * parameters['in_channels']
-            #Converting input to single channel. Output will be only number of bins
-            #May possibly compute LBP for each channel independently
-            out_size = parameters['out_channels'] * parameters['in_channels'] ## May cause issues with conv, going to have to look into it
-            
             return out_size
             
         #Update linear for dilation
@@ -64,18 +58,14 @@ def get_feat_size(parameters, dataloaders, preprocess_layer = None, histogram_la
         
 
         if len(inputs.shape) < 4: #If no channel dimension (grayscale), add dimension
-            #inputs = inputs.to('cpu').unsqueeze(1)
             inputs = inputs.unsqueeze(1)
         else:
-            #inputs = inputs.to('cpu')
             pass
         break
     
     #Forward pass to compute feature size
-    #pdb.set_trace()
     feats = preprocess_layer(inputs[0].unsqueeze(0))
     feats = histogram_layer(feats)
-    #histogram_layer(inputs[0].unsqueeze(0))
     
     #Compute out size
     out_size = feats.flatten(1).shape[-1]
