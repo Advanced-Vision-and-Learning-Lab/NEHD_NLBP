@@ -1,7 +1,6 @@
 ## PyTorch dependencies
 import torch.nn as nn
 import torch
-import pdb
 
 class HistogramNetwork(nn.Module):
     def __init__(self,histogram_layer,num_ftrs,num_classes,reconstruction=False,preprocess_layer = None):
