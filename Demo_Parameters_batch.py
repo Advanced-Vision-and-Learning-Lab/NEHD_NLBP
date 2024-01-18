@@ -6,9 +6,6 @@ Only change parameters in this file before running
 demo.py
 @author: jpeeples 
 """
-
-#Salim, possibly update all arguments to be in parser
-
 def Parameters(args,learn_hist=True,learn_edge_kernels=True,feature_init=True,
                learn_transform=True,dilation=1, mask_size=[3,3]):
     
@@ -50,9 +47,9 @@ def Parameters(args,learn_hist=True,learn_edge_kernels=True,feature_init=True,
     
     #Select dataset. Set to number of desired texture dataset
     data_selection = args.data_selection
-    Dataset_names = {1: 'MNIST', 2: 'Fashion_MNIST',
-                     3: 'KTH-TIPS-2b', 4: 'Derma_MNIST', 5: 'PRMI',
-                     6: 'SVHN', 7:'BloodMNIST', 8:'UCMerced_Index', 9:'Eurosat'} 
+    Dataset_names = {1: 'Fashion_MNIST',
+                     2: 'Derma_MNIST', 3: 'PRMI',
+                     4:'BloodMNIST'} 
     
     #EHD and LBP parameters
     #mask_size - Convolution kernel size for edge responses
@@ -159,7 +156,7 @@ def Parameters(args,learn_hist=True,learn_edge_kernels=True,feature_init=True,
     #Number of images to view for TSNE (defaults to all training imgs unless
     #value is less than total training images).
     TSNE_visual = False # Toggle
-    Separate_TSNE = False # Maybe remove
+    Separate_TSNE = False
     Num_TSNE_images = 10000
     
     #Visualization parameters for figures
@@ -170,107 +167,37 @@ def Parameters(args,learn_hist=True,learn_edge_kernels=True,feature_init=True,
     fusion_method = args.fusion_method
     
     ######## ONLY CHANGE PARAMETERS ABOVE ########
-    Data_dirs = {'MNIST': './Datasets/',
-                 'Fashion_MNIST': './Datasets/',
-                 'KTH-TIPS-2b': './Datasets/KTH-TIPS2-b',
+    Data_dirs = {'Fashion_MNIST': './Datasets/',
                  'Derma_MNIST': './Datasets/Derma_MNIST',    
                  'PRMI': './Datasets/PRMI',
-                 'SVHN': './Datasets/',
-                 'BloodMNIST': './Datasets/BloodMNIST',
-                 'UCMerced_Index': './Datasets/UCMerced_Index',
-                 'Eurosat':'./Datasets/'} ##
+                 'BloodMNIST': './Datasets/BloodMNIST'}
     
-    Model_names = {'MNIST': 'Neural_EHD',
-                   'Fashion_MNIST': 'Neural_EHD',
-                   'KTH-TIPS-2b': 'Neural_EHD',
+    Model_names = {'Fashion_MNIST': 'Neural_EHD',
                    'Derma_MNIST': 'Neural_EHD',
                    'PRMI': 'Neural_EHD',
-                   'SVHN': 'Neural_EHD',
-                   'BloodMNIST': 'Neural_EHD',
-                   'UCMerced_Index': 'Neural_EHD',
-                   'Eurosat':'Neural_EHD'} ##
+                   'BloodMNIST': 'Neural_EHD'}
     
-    num_classes = {'MNIST': 10,
-                   'Fashion_MNIST': 10,
-                   'KTH-TIPS-2b': 11,
+    num_classes = {'Fashion_MNIST': 10,
                    'Derma_MNIST': 7,
                    'PRMI': 4,
-                   'SVHN': 10,
-                   'BloodMNIST': 8,
-                   'UCMerced_Index': 21,
-                   'Eurosat': 10} ##
+                   'BloodMNIST': 8}
     
-    Class_names = {'MNIST': ['0','1','2','3','4','5','6',
-                             '7','8','9'],
-                   'Fashion_MNIST': ['T-shirt/top', 'Trouser', 'Pullover', 'Dress',
+    Class_names = {'Fashion_MNIST': ['T-shirt/top', 'Trouser', 'Pullover', 'Dress',
                                      'Coat', 'Sandal', 'Shirt', 'Sneaker','Bag',
                                      'Ankle boot'],
-                   'KTH-TIPS-2b': ['aluminum_foil', 'brown_bread', 'corduroy', 'cork', 
-                        'cotton', 'cracker', 'lettuce leaf', 'linen', 
-                        'white_bread', 'wood', 'wool'],
                     'Derma_MNIST': [0,1,2,3,4,5,6],
                     'PRMI': ['cotton', 'papaya', 'sunflower', 'switchgrass'],
-                    'SVHN': ['0','1','2','3','4','5','6',
-                             '7','8','9'],
-                    'BloodMNIST': [0, 1, 2, 3, 4, 5, 6, 7],
-                    'UCMerced_Index': ['agricultural', 'airplane', 'baseballdiamond', 'beach', 'buildings', 'chaparral', 'denseresidential', 
-                                       'forest', 'freeway', 'golfcourse', 'harbor', 'intersection', 'mediumresidential', 'mobilehomepark', 'overpass',
-                                         'parkinglot', 'river', 'runway', 'sparseresidential', 'storagetanks', 'tenniscourt'],
-                    'Eurosat': ['Forest', 'Annual Crop', 'Highway', 'Herbaceous Vegetation', 'Pasture', 'Residential', 'River', 'Industrial', 'Permanent Crop', 'Sea/Lake']} ##
-    
-    Splits = {'MNIST': 1,
-              'Fashion_MNIST': 3,
-              'KTH-TIPS-2b': 4,
+                    'BloodMNIST': [0, 1, 2, 3, 4, 5, 6, 7]}    
+                 
+    Splits = {'Fashion_MNIST': 3,
               'Derma_MNIST': 3,
               'PRMI': 5,
-              'SVHN': 3,
-              'BloodMNIST' : 3,
-              'UCMerced_Index': 3,
-              'Eurosat': 3} ##
+              'BloodMNIST' : 3}
     
-    Sizes = {'MNIST': 28,
-             'Fashion_MNIST': 28,
-             'KTH-TIPS-2b': center_size,
+    Sizes = {'Fashion_MNIST': 28,
              'Derma_MNIST': center_size,
              'PRMI': center_size, 
-             'SVHN': 32,
-             'BloodMNIST': center_size,
-             'UCMerced_Index': center_size,
-             'Eurosat': 3} ##
-    
-
-    #########
-
-    # The code below needs to be updated to be more general // This does not work right
-    '''
-    if (fusion_method is None and ("MNIST" not in Dataset)): # Finicky code
-        mean = {'MNIST': (0.1307,),
-                'Fashion_MNIST': (0.1307,),
-                'KTH_Gray': (.5,),
-                'KTH_RGB': (0.485, 0.456, 0.406),
-                'CIFAR10': (0.49139968, 0.48215827 ,0.44653124),
-                'SVHN': (0.43733277916908264, 0.44396793842315674, 0.47414693236351013)} 
-        std = {'MNIST': (0.3081,),
-            'Fashion_MNIST': (0.3081,),
-            'KTH_Gray': (.5,),
-            'KTH_RGB': (0.229, 0.224, 0.225),
-            'CIFAR10': (0.24703233, 0.24348505, 0.26158768),
-            'SVHN': (0.11597134917974472, 0.11886941641569138, 0.10101058334112167)} 
-    else:
-        mean = {'MNIST': (0.1307,),
-            'Fashion_MNIST': (0.1307,),
-            'KTH_Gray': (.5,),
-            'KTH_RGB': (0.485, 0.456, 0.406), # WRONG
-            'CIFAR10': (0.49139968, 0.48215827 ,0.44653124),
-            'SVHN': (0.44538751244544983,)} 
-        std = {'MNIST': (0.3081,),
-            'Fashion_MNIST': (0.3081,),
-            'KTH_Gray': (.5,),
-            'KTH_RGB': (0.229, 0.224, 0.225), # WRONG
-            'CIFAR10': (0.24703233, 0.24348505, 0.26158768),
-            'SVHN': (0.11501172930002213,)} 
-    '''       
-        
+             'BloodMNIST': center_size}    
     
     Dataset = Dataset_names[data_selection]
     data_dir = Data_dirs[Dataset]
@@ -278,14 +205,12 @@ def Parameters(args,learn_hist=True,learn_edge_kernels=True,feature_init=True,
     Hist_model_name = 'N{}_Scale_{}_Dilate_{}'.format(feature,mask_size,dilation)
     base_model_name = 'Scale_{}_Dilate_{}'.format(mask_size,dilation)
 
-###############
-# 
-# The code below needs to be updated to be more general // This does not work right   
-    if (fusion_method is None and ("Derma_MNIST" in Dataset or "BloodMNIST" in Dataset)): # Finicky code 
+# Adjust the number of channels depending on the dataset and fusion method  
+    if (fusion_method is None and ("Derma_MNIST" in Dataset or "BloodMNIST" in Dataset)): 
         in_channels = 3
-    elif ((fusion_method is None and ("MNIST" not in Dataset))): # Finicky code
+    elif ((fusion_method is None and ("MNIST" not in Dataset))): 
         in_channels = 3 
-    else: #( or fusion_method == "conv")
+    else: 
         in_channels = 1
 
 ###############    
