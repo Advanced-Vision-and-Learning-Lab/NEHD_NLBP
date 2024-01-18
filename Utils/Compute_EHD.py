@@ -2,31 +2,19 @@
 """
 Created on Mon Sep 14 11:52:40 2020
 Function to generate EHD histogram feature maps
-@author: jpeeples
+@author: jpeeples, luke saleh
 """
 import numpy as np
 from scipy import signal,ndimage
 import torch.nn.functional as F
 import pdb
 import torch
-
-#import MPSImage
-
-
-# -*- coding: utf-8 -*-
-"""
-Baseline LBP feature as Pytorch layer
-@author: luke saleh
-"""
-import torch
 import torch.types
 import torch.nn as nn
-import numpy as np
 from skimage.feature import local_binary_pattern
 from torchvision import transforms
 import dask
 import warnings
-import pdb
     
 class EHD_Layer(nn.Module):
     def __init__(self, in_channels, angle_res, normalize_kernel,
@@ -62,18 +50,10 @@ class EHD_Layer(nn.Module):
         
         #Replicate masks along first dimension (for independently)
         masks = masks.repeat(in_channels,1,1,1)
-        
-        #if device is not None:
-        #    masks = masks.to(device)
 
         self.masks = masks
         # Call masks now that they are made
         self.num_orientations = self.masks.shape[0] // in_channels
-        
-        #Treat independently
-        #self.edge_responses = nn.conv2d(in_channels = self.in_channels, out_channels = self.out_channels, 
-        #                                kernel_size = self.mask_size, stride = 1, 
-        #                                padding = 0, bias = False)
     
     def forward(self,x):
         self.masks = self.masks.to(x.device)
