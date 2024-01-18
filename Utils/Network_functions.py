@@ -33,7 +33,6 @@ from Utils.Compute_LBP import LocalBinaryLayer
 from Utils.Compute_Sizes import get_feat_size
 from Utils.Generate_Plots import *
 from .pytorchtools import EarlyStopping
-import pdb
 
 plt.ioff()
 
@@ -95,14 +94,7 @@ def train_model(model, dataloaders, criterion, optimizer, device,parameters,
                 with torch.set_grad_enabled(phase == 'train'):
                         
                     # Get model outputs and calculate loss
-                    #if parameters['histogram']:
                     feats, outputs = model(inputs)
-                    #else:
-                    #    feats, outputs = model(feature_outputs)
-                    
-                    #if parameters['reconstruction']:
-                    #    loss = criterion(feats,feature_outputs)
-                    #else:
                     loss = criterion(outputs,labels)
                     _, preds = torch.max(outputs, 1)
                  
@@ -226,7 +218,6 @@ def test_model(dataloader,model,device,parameters,split):
     print('Testing Model...')
     with torch.no_grad():
         for idx, (inputs, labels,index) in enumerate(Bar(dataloader)):
-        # for idx, (inputs, labels) in enumerate(Bar(dataloader)):
             
             if len(inputs.shape) < 4: #If no channel dimension (grayscale), add dimension
                 inputs = inputs.to(device).unsqueeze(1)
@@ -235,37 +226,19 @@ def test_model(dataloader,model,device,parameters,split):
             labels = labels.to(device)
           
             # forward
-            #if parameters['histogram']:
             feats, outputs = model(inputs)
-            #else:
-            #    feats, outputs = model(feature_outputs)
-            
-            #if parameters['reconstruction']:
-            #   loss = F.mse_loss(feats, feature_outputs)
-               
-            #else:
             _, preds = torch.max(outputs, 1)
     
             #If test, accumulate labels for confusion matrix
             GT = np.concatenate((GT,labels.detach().cpu().numpy()),axis=None)
             Predictions = np.concatenate((Predictions,preds.detach().cpu().numpy()),axis=None)
-               
-            # if parameters['reconstruction']:
-            #     running_loss += loss.item() * inputs.size(0)
-            # else:
+
             running_corrects += torch.sum(preds == labels.data)
 
         
     test_loss = running_loss / len(dataloader.sampler)
     test_acc = running_corrects.float() / (len(dataloader.sampler))
-   
-    #TBD fix plotting for LBP ####################
-    # if parameters['aggregation_type'] == 'GAP':
-    #     plot_FMS_GAP(inputs,EHD_outputs,feats,'test',None,parameters,split,
-    #           img_max=3)
-    # else:
-    #     plot_FMS(inputs,EHD_outputs,feats,'test',None,parameters,split,
-    #           img_max=3)
+  
     
     if parameters['reconstruction']:
          print('Test Loss: {:4f}'.format(test_loss))
@@ -296,14 +269,13 @@ def initialize_model(parameters,dataloaders_dict,device,num_classes, in_channels
 
         model_ft = HistogramNetwork(histogram_layer,num_ftrs,num_classes,reconstruction=reconstruction, preprocess_layer=preprocess_layer)
         
-        #Fix paramters of model
         if not(parameters['learn_hist']):
             #Fix histogram paramters
             model_ft.histogram_layer.centers.requires_grad = False
             model_ft.histogram_layer.widths.requires_grad = False
         
         if not(parameters['learn_edge_kernels']):
-            # #Fix kernel
+            #Fix kernel
             model_ft.histogram_layer.edge_kernels.requires_grad = False
         
     # Baseline model
