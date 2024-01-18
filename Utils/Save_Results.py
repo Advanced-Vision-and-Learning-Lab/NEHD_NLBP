@@ -30,7 +30,6 @@ def generate_filename(Network_parameters,split):
     if(Network_parameters['histogram']):
         if(Network_parameters['feature_init']):
         
-            # use filename = '{}/{}/{}/{}/{}_{}_{}/{}_init_{}/Run_{}/'
             filename = '{}/{}/{}/{}/{}_{}_{}/{}_init_{}/Run_{}/'.format(Network_parameters['folder'],
                                          Network_parameters['feature'],
                                          Network_parameters['Dataset'],
@@ -41,7 +40,6 @@ def generate_filename(Network_parameters,split):
                                          Network_parameters['feature'],
                                          transform,str(split + 1))
         else:
-            # filename = '{}/{}/{}/{}/{}_{}_{}/Rand_init_{}/Run_{}/'
             filename = '{}/{}/{}/{}/{}_{}_{}/Rand_init_{}/Run_{}/'.format(Network_parameters['folder'],
                                        Network_parameters['feature'],
                                        Network_parameters['Dataset'],
@@ -53,7 +51,6 @@ def generate_filename(Network_parameters,split):
     #Baseline model
     else:
         if Network_parameters['feature'] == 'LBP':
-            #filename = '{}/{}/{}/Baseline_{}_{}_{}/{}/Run_{}/
             filename = '{}/{}/{}/Baseline_{}_{}_{}/{}/Run_{}/'.format(Network_parameters['folder'],
                                        Network_parameters['feature'], 
                                        Network_parameters['Dataset'],
