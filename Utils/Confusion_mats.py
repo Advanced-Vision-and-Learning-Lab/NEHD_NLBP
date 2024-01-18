@@ -23,7 +23,6 @@ def plot_confusion_matrix(cm, classes,
        print("Normalized confusion matrix")
    else:
        print('Confusion matrix, without normalization')
-#   print(cm)
    
    #Generate new figure if needed
    if ax is None:
@@ -32,7 +31,6 @@ def plot_confusion_matrix(cm, classes,
    if show_percent:
        cm_percent = 100*cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
        im = ax.imshow(cm_percent,interpolation='nearest',cmap=cmap,vmin=0,vmax=100)
-       #plt.title(title)
        cb = plt.colorbar(im,fraction=0.046,pad=0.04)
        cb.ax.tick_params(labelsize=fontsize)
    else:
@@ -60,13 +58,9 @@ def plot_confusion_matrix(cm, classes,
                    yticks=np.arange(len(classes)),
                    xticklabels=classes,
                    yticklabels=classes)
-                   #label="True label",
-                   #xlabel="Predicted label")
    
    ax.set_ylim((len(classes) - 0.5, -0.5))
    plt.setp(ax.get_xticklabels(), rotation=90)
-   #plt.ylabel('True label')
-   #plt.xlabel('Predicted label')
    plt.tight_layout()
        
 def plot_avg_confusion_matrix(cm, classes,
@@ -90,7 +84,6 @@ def plot_avg_confusion_matrix(cm, classes,
        cm_percent = 100*cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
        cm_percent_std = 100*std_cm.astype('float') / (std_cm.sum(axis=1)[:, np.newaxis]+10e-6)
        im = ax.imshow(cm_percent,interpolation='nearest',cmap=cmap,vmin=0,vmax=100)
-       #plt.title(title)
        cb = plt.colorbar(im,fraction=0.046,pad=0.04)
        cb.ax.tick_params(labelsize=fontsize)
    
@@ -99,7 +92,6 @@ def plot_avg_confusion_matrix(cm, classes,
        plt.title(title)
        cb = plt.colorbar(im,fraction=0.046,pad=0.04)
        cb.ax.tick_params(labelsize=fontsize)
-       # cb.set_clim(0,100)
        
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
@@ -112,7 +104,6 @@ def plot_avg_confusion_matrix(cm, classes,
     plt.yticks(tick_marks, classes, fontsize = fontsize)
     fmt = '.2f' if normalize else 'd'
     thresh = cm.max() / 2.
-    #pdb.set_trace()
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
         if show_percent:
             s = str(format(cm[i, j], fmt) + '±' + format(std_cm[i, j], fmt) +
@@ -129,11 +120,7 @@ def plot_avg_confusion_matrix(cm, classes,
                    yticks=np.arange(len(classes)),
                    xticklabels=classes,
                    yticklabels=classes)
-                   #ylabel="True label",
-                   #xlabel="Predicted label")
     
     ax.set_ylim((len(classes) - 0.5, -0.5))
     plt.setp(ax.get_xticklabels(), rotation=90)
-    #plt.ylabel('True label')
-    #plt.xlabel('Predicted label')
     plt.tight_layout()
