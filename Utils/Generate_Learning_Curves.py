@@ -22,12 +22,6 @@ def Plot_Learning_Curves(train_acc,train_loss,val_acc,val_loss,best_epoch,
     loss_fig = plt.figure()
     
     count = 0
-    
-    #Need to account for not having weight when saving embedding and classification loss
-    # Will remove when network functions is updated
-    # May not need because I want to see the loss as the model changes
-    # weight_dict = {'total': None, 'class_loss': 1-weight, 'embed_loss': weight}
-    # for key in train_loss.keys():
         
     loss_ax = loss_fig.add_subplot(1, 1, 1)
     epochs = np.arange(1,len(train_loss)+1)
@@ -41,20 +35,13 @@ def Plot_Learning_Curves(train_acc,train_loss,val_acc,val_loss,best_epoch,
     kw = dict(xycoords='data',textcoords="axes fraction",
               arrowprops=arrowprops, bbox=bbox_props, ha="right", va="top")
     loss_ax.annotate(text, xy=(best_epoch+1, ymin), xytext=(0.94,0.96), **kw)
-    # loss_ax.plot([best_epoch], 
-    #                     marker='o', markersize=3, color='red')
-        # if weight_dict[key] is not None:
-        #     loss_ax.set_title(key.capitalize() + ' (' + str(weight_dict[key]) + ')')
-        # else:
-        #     loss_ax.set_title(key.capitalize())
 
     loss_ax.set_xlabel('Epoch')
     loss_ax.set_ylabel('Error')
-    # loss_ax[count].legend(['Training', 'Validation', 'Best Epoch'], loc='upper right')
     count += 1
     
     loss_fig.tight_layout(pad=2.0,rect=[0, 0.03, 1, 0.95])
-    loss_fig.subplots_adjust(right=0.75) #Used to have .87
+    loss_fig.subplots_adjust(right=0.75)
     loss_ax.legend(['Training', 'Validation'],
               bbox_to_anchor=(1.05, 1), loc='best', borderaxespad=0.)
     
@@ -64,14 +51,12 @@ def Plot_Learning_Curves(train_acc,train_loss,val_acc,val_loss,best_epoch,
         
     # visualize results
     acc_fig, acc_ax = plt.subplots()
-    # Convert val_acc list to PyTorch tensor
-    ############################
     val_acc_tensor = torch.tensor(val_acc)
     val_acc_np = val_acc_tensor.cpu().numpy()
 
     train_acc_tensor = torch.tensor(train_acc)
     train_acc_np = train_acc_tensor.cpu().numpy()
-    ############################
+
     acc_ax.plot(epochs,train_acc_np)
     acc_ax.plot(epochs, val_acc_np)
     ymax = val_acc[best_epoch]
