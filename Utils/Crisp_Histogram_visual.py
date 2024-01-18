@@ -57,7 +57,7 @@ def Generate_Histogram_visual(dataloaders_dict,model,sub_dir,device,class_names,
             model.to(device)
             features_extracted = []
             saved_imgs = []
-            #Optimize code soon
+          
             for idx, (inputs, classes,index)  in enumerate(Bar(dataloaders_dict[phase])):
                 images = inputs.to(device)
                 labels = classes.to(device, torch.long)
@@ -70,9 +70,7 @@ def Generate_Histogram_visual(dataloaders_dict,model,sub_dir,device,class_names,
                 saved_imgs.append(images)
          
       
-            # features_extracted = np.concatenate(features_extracted,axis=0)
             saved_imgs = torch.cat(saved_imgs,dim=0)
-            # EHD_feats = np.concatenate(EHD_feats)
             
             #Compute FDR scores
             GT_val = GT_val[1:]
@@ -82,8 +80,6 @@ def Generate_Histogram_visual(dataloaders_dict,model,sub_dir,device,class_names,
             for temp_class in range(0,len(class_names)):
                 
                 #For each class, plot image and features as histograms
-                # pdb.set_trace()
-                # sel_index = np.sort(img_indices[GT_val==temp_class])[:img_max]
                 temp_indices = img_indices[GT_val==temp_class]
                 sel_index = np.partition(temp_indices,img_max)[:img_max]
                 selected_imgs = saved_imgs[sel_index]
@@ -136,7 +132,6 @@ def Generate_Histogram_visual(dataloaders_dict,model,sub_dir,device,class_names,
                     else:
                         ticks_loc = ax[img,1].get_xticks().tolist()[2:len(angle_names)+2]
                     ax[img,1].xaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
-                    # ax[img,1].set_xticklabels([x for x in ticks_loc])
                     ax[img,1].set_xticklabels(angle_names,rotation=45)
                     ax[img,1].set_ylabel('Avg Pixel Count')
                     ax[img,1].set_title('{}'.format(feature))
@@ -152,14 +147,9 @@ def Generate_Histogram_visual(dataloaders_dict,model,sub_dir,device,class_names,
                     ax[img,2].set_ylabel('Avg Pixel Count')
                     ax[img,2].set_title('N{}'.format(feature))
                 
-                # pdb.set_trace()
                 plt.tight_layout()
-                # pdb.set_trace()
-                # plt.suptitle('Examples Images of {}'.format(class_names[temp_class]))
-                # plt.show()
                 temp_class_name = re.sub(r'\W+', '', class_names[temp_class])
                 fig.savefig((hist_dir + '{}.png').format(temp_class_name,dpi=fig.dpi))
-                # pdb.set_trace()
                 plt.close()
     
 
