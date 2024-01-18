@@ -27,7 +27,6 @@ class NEHDLayer(nn.Module):
         self.in_channels = in_channels
         self.numBins = num_bins
         self.stride = stride
-        #self.kernel_size = window_size
         self.window_size = window_size
         self.mask_size = mask_size
         self.padding = padding
@@ -68,7 +67,6 @@ class NEHDLayer(nn.Module):
                 
 
             else: #Multichannel, aggregate
-            # TBD: aggregate responses over each channel (groups = 1)
                 self.edge_responses = nn.Conv2d(self.in_channels,self.numBins*self.in_channels,
                                                   self.mask_size,groups=self.in_channels,
                                                   bias=False,dilation=self.dilation)
@@ -101,8 +99,6 @@ class NEHDLayer(nn.Module):
             #Repeat along channel dimension
             masks = masks.repeat(1,self.in_channels,1,1)
             
-            #Hard code for MNIST, change later (maximum value of input image)
-            #Need to determine 
             self.bin_init = 1
             self.bin_init = sum(2*self.bin_init*torch.topk(torch.flatten(masks[0,0]),self.mask_size[0])[0])
             masks.requires_grad = True
@@ -112,7 +108,6 @@ class NEHDLayer(nn.Module):
             else:
                 
                 #Generate indices for multichannel (treat each channel independently)
-                
                 if self.learn_no_edge:
                     indices = np.arange(0,self.in_channels*(self.numBins+1))
                     indices = indices.reshape(-1,self.numBins+1)[:,1:].flatten() - 1
@@ -125,9 +120,6 @@ class NEHDLayer(nn.Module):
                
                 for channel in range(0,self.in_channels):
                     self.edge_responses.weight.data[indices[channel]]= masks[:,channel].unsqueeze(1)
-                # else:
-                # pdb.set_trace()
-                #     self.edge_responses.weight.data = masks
           
             self.histogram_layer.bin_centers_conv.bias.data.fill_(-self.bin_init.clone().detach().requires_grad_(True))
             self.histogram_layer.bin_centers_conv.weight.data.fill_(1)
