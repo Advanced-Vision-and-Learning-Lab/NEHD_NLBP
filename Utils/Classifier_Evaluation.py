@@ -58,18 +58,6 @@ def Classifier_Evaluation(dataloaders_dict,model,sub_dir,device,class_names):
       GT_val = GT_val[1:]
       data_indices = data_indices[1:]
       
-
-      # if (Num_TSNE_images is None) or (Num_TSNE_images > len(GT_val)):
-      #     Num_TSNE_images = len(GT_val)
-      #     temp_indices = np.arange(len(dataloaders_dict[phase].sampler))
-      
-      # else:
-      #     indices = np.arange(len(dataloaders_dict[phase].sampler))
-      #     _,_,_,_,_,temp_indices = train_test_split(GT_val,GT_val,indices,
-      #                                               stratify=GT_val,
-      #                                               test_size = Num_TSNE_images,
-      #                                               random_state=42)
-      
       features_extracted = np.concatenate(features_extracted,axis=0)
 
       #Save feature and labels for each datas split
