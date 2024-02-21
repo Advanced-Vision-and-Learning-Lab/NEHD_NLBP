@@ -33,6 +33,7 @@ from Utils.Compute_LBP import LocalBinaryLayer
 from Utils.Compute_Sizes import get_feat_size
 from Utils.Generate_Plots import *
 from .pytorchtools import EarlyStopping
+import pdb
 
 plt.ioff()
 
@@ -62,6 +63,25 @@ def train_model(model, dataloaders, criterion, optimizer, device,parameters,
     #Plot initial bin centers and widths
     if saved_bins is not None:
         plot_histogram(saved_bins[0,:],saved_widths[0,:],-1,'train',parameters,split)
+        
+    #Generate feature layers for reconstruction
+    if parameters['reconstruction']:
+        if parameters['feature'] == 'EHD': 
+           feature_layer = EHD_Layer(parameters['in_channels'], parameters['angle_res'], 
+                                     parameters['normalize_kernel'],
+                                     parameters['dilation'], parameters['threshold'], 
+                                     parameters['window_size'], parameters['stride'], 
+                                     parameters['normalize_count'],
+                                     parameters['aggregation_type'], 
+                                     kernel_size= parameters['mask_size'],device = device)
+        elif parameters['feature'] == 'LBP':
+            feature_layer = LocalBinaryLayer(parameters['in_channels'],
+                                             radius=parameters['R'],
+                                            n_points = parameters['P'],
+                                            method = parameters['LBP_method'],
+                                            num_bins = parameters['numBins'],
+                                            density = parameters['normalize_count'],
+                                            device = device)
     
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
@@ -95,8 +115,21 @@ def train_model(model, dataloaders, criterion, optimizer, device,parameters,
                         
                     # Get model outputs and calculate loss
                     feats, outputs = model(inputs)
-                    loss = criterion(outputs,labels)
-                    _, preds = torch.max(outputs, 1)
+    
+                    if parameters['reconstruction']:
+                        # pdb.set_trace()
+                    
+                        feature_outputs = feature_layer(inputs)
+
+                        #If NLBP (local), take average over spatial to get vector
+                        if parameters['aggregation_type'] == 'Local':
+                            feats = nn.AdaptiveAvgPool2d(1)(feats)
+                       
+                        feats = torch.flatten(feats,start_dim=1) 
+                        loss = criterion(feats,feature_outputs)
+                    else:
+                        loss = criterion(outputs,labels.long())
+                        _, preds = torch.max(outputs, 1)
                  
                     if torch.isnan(loss):
                       pdb.set_trace()
@@ -106,7 +139,12 @@ def train_model(model, dataloaders, criterion, optimizer, device,parameters,
                             pass
                         else:
                             loss.backward()
-                            optimizer.step()                    
+                            optimizer.step()
+                            
+                            if scheduler is not None:
+                                scheduler.step()
+                                
+            
     
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
@@ -120,23 +158,21 @@ def train_model(model, dataloaders, criterion, optimizer, device,parameters,
                 epoch_acc = running_corrects.float() / (len(dataloaders[phase].sampler))
             
             if phase == 'train':
-                if scheduler is not None:
-                    scheduler.step()
                 train_error_history.append(epoch_loss)
                 
                 train_acc_history.append(epoch_acc)
                 
                 if(histogram):
                     #save bins and widths
-                    saved_bins[epoch+1,:] = model.histogram_layer.centers.detach().cpu().numpy()
-                    saved_widths[epoch+1,:] = model.histogram_layer.widths.reshape(-1).detach().cpu().numpy()
+                    saved_bins[epoch+1,:] = model.neural_feature.histogram_layer.centers.detach().cpu().numpy()
+                    saved_widths[epoch+1,:] = model.neural_feature.histogram_layer.widths.reshape(-1).detach().cpu().numpy()
                     if parameters['aggregation_type'] == 'GAP':
-                        epoch_weights.append(model.histogram_layer.edge_kernels.data)
-                        plot_kernels(feature_masks,model.histogram_layer.edge_kernels.data,phase,
+                        epoch_weights.append(model.neural_feature.edge_kernels.data)
+                        plot_kernels(feature_masks,model.neural_feature.edge_kernels.data,phase,
                                  epoch,parameters,split)
                     else:
-                        epoch_weights.append(model.histogram_layer.edge_kernels.data)
-                        plot_kernels(feature_masks,model.histogram_layer.edge_kernels.data,phase,
+                        epoch_weights.append(model.neural_feature.edge_kernels.data)
+                        plot_kernels(feature_masks,model.neural_feature.edge_kernels.data,phase,
                                  epoch,parameters,split)
                     plot_histogram(saved_bins[epoch+1,:],saved_widths[epoch+1,:],
                                 epoch,phase,parameters,split)
@@ -212,7 +248,27 @@ def test_model(dataloader,model,device,parameters,split):
     
     running_corrects = 0
     running_loss = 0
+    test_acc = 0
     model.eval()
+    
+    #Generate feature layers for reconstruction
+    if parameters['reconstruction']:
+        if parameters['feature'] == 'EHD': 
+           feature_layer = EHD_Layer(parameters['in_channels'], parameters['angle_res'], 
+                                     parameters['normalize_kernel'],
+                                     parameters['dilation'], parameters['threshold'], 
+                                     parameters['window_size'], parameters['stride'], 
+                                     parameters['normalize_count'],
+                                     parameters['aggregation_type'], 
+                                     kernel_size= parameters['mask_size'],device = device)
+        elif parameters['feature'] == 'LBP':
+            feature_layer = LocalBinaryLayer(parameters['in_channels'],
+                                             radius=parameters['R'],
+                                            n_points = parameters['P'],
+                                            method = parameters['LBP_method'],
+                                            num_bins = parameters['numBins'],
+                                            density = parameters['normalize_count'],
+                                            device = device)
     
     # Iterate over data
     print('Testing Model...')
@@ -227,27 +283,36 @@ def test_model(dataloader,model,device,parameters,split):
           
             # forward
             feats, outputs = model(inputs)
-            _, preds = torch.max(outputs, 1)
-    
-            #If test, accumulate labels for confusion matrix
-            GT = np.concatenate((GT,labels.detach().cpu().numpy()),axis=None)
-            Predictions = np.concatenate((Predictions,preds.detach().cpu().numpy()),axis=None)
-
-            running_corrects += torch.sum(preds == labels.data)
+            
+            if parameters['reconstruction']:
+              if parameters['aggregation_type'] == 'Local':
+                feats = nn.AdaptiveAvgPool2d(1)(feats)
+               
+              feats = torch.flatten(feats,start_dim=1) 
+              feature_outputs = feature_layer(inputs)
+              loss = F.mse_loss(feats, feature_outputs)
+               
+            else:
+                _, preds = torch.max(outputs, 1)
+        
+                #If test, accumulate labels for confusion matrix
+                GT = np.concatenate((GT,labels.detach().cpu().numpy()),axis=None)
+                Predictions = np.concatenate((Predictions,preds.detach().cpu().numpy()),axis=None)
+               
+            if parameters['reconstruction']:
+                running_loss += loss.item() * inputs.size(0)
+            else:
+                running_corrects += torch.sum(preds == labels.data)
+                test_acc = running_corrects.float() / (len(dataloader.sampler))
 
         
     test_loss = running_loss / len(dataloader.sampler)
-    test_acc = running_corrects.float() / (len(dataloader.sampler))
-  
+   
+    print('Test Accuracy: {:4f}'.format(test_acc))
     
-    if parameters['reconstruction']:
-         print('Test Loss: {:4f}'.format(test_loss))
-    else:
-        print('Test Accuracy: {:4f}'.format(test_acc))
-        
     test_dict = {'GT': GT[1:], 'Predictions': Predictions[1:], 'Index':Index,
-                  'test_acc': np.round(test_acc.cpu().numpy()*100,2),
-                  'test_loss': np.round(test_loss,2)}
+                    'test_acc': np.round(test_acc.cpu().numpy()*100,2),
+                    'test_loss': np.round(test_loss,2)}
     
     return test_dict
        
@@ -263,21 +328,14 @@ def initialize_model(parameters,dataloaders_dict,device,num_classes, in_channels
     # Initialize these variables which will be set in this if statement. Each of these
     #   variables is model specific.
     #Compute size out of output layer
-    num_ftrs = get_feat_size(parameters, dataloaders_dict, preprocess_layer= preprocess_layer, histogram_layer=histogram_layer)
+    num_ftrs = get_feat_size(parameters, dataloaders_dict, preprocess_layer= preprocess_layer,
+                             histogram_layer=histogram_layer)
 
     if histogram_layer is not None:
 
-        model_ft = HistogramNetwork(histogram_layer,num_ftrs,num_classes,reconstruction=reconstruction, preprocess_layer=preprocess_layer)
-        
-        if not(parameters['learn_hist']):
-            #Fix histogram paramters
-            model_ft.histogram_layer.centers.requires_grad = False
-            model_ft.histogram_layer.widths.requires_grad = False
-        
-        if not(parameters['learn_edge_kernels']):
-            #Fix kernel
-            model_ft.histogram_layer.edge_kernels.requires_grad = False
-        
+        model_ft = HistogramNetwork(histogram_layer,num_ftrs,num_classes,
+                                    reconstruction=reconstruction, 
+                                    preprocess_layer=preprocess_layer)
     # Baseline model
     else:
         if parameters['feature'] == 'EHD': 
@@ -300,4 +358,3 @@ def initialize_model(parameters,dataloaders_dict,device,num_classes, in_channels
                        aggregation_type=parameters['aggregation_type'], preprocess_layer=preprocess_layer)
     
     return model_ft
-
