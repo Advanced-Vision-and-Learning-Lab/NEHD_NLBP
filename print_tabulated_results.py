@@ -108,7 +108,6 @@ def parse_args():
     parser.add_argument('--feature', type=str, default='EHD', help='EHD or LBP')
     parser.add_argument('--dataset', type=str, default='Fashion_MNIST', help='Write it exactly as it is in the folder')
     parser.add_argument('--fusion_method', type=str, default='None', help='None,grayscale, conv' )
-    parser.add_argument('--type', type=str, default='Test', help='Type of the result: Test, SVM, XGB, KNN')
     return parser.parse_args()
 
 if __name__ == "__main__":
