@@ -24,7 +24,6 @@ import torch.nn as nn
 
 ## Local external libraries
 from Utils.Generate_TSNE_visual import Generate_TSNE_visual
-from Utils.Classifier_Evaluation import Classifier_Evaluation
 from Utils.Network_functions import initialize_model
 from Prepare_Data import Prepare_DataLoaders
 from Utils.Confusion_mats import plot_confusion_matrix,plot_avg_confusion_matrix
@@ -70,6 +69,7 @@ def main(args, params):
     print('Generating Batch Experiments Results...')
     setting_count = args.setting_cnt
     single_setting = args.single_setting
+    TSNE_visual = args.TSNE_visual
     #Append base model (histogram_layer = None)
     settings.append(settings[-1])
     
@@ -117,9 +117,6 @@ def main(args, params):
         val_acc = np.zeros(NumRuns)
         MCC = np.zeros(NumRuns)
         loss = np.zeros(NumRuns)
-        KNN_acc = np.zeros(NumRuns)
-        SVM_acc = np.zeros(NumRuns)
-        XGB_acc = np.zeros(NumRuns)
         
         
         #Name of dataset
@@ -206,7 +203,7 @@ def main(args, params):
             model.load_state_dict(best_weights)
             model = model.to(device)
 
-            if (Results_parameters['TSNE_visual']):
+            if (TSNE_visual):
                 print("Initializing Datasets and Dataloaders...")
                 
                 dataloaders_dict = Prepare_DataLoaders(Results_parameters,split,
@@ -250,12 +247,6 @@ def main(args, params):
                                   train_dict['best_epoch'],
                                   sub_dir)
 
-            # Classifiers
-            if include_classifier_outputs:
-                classifier_accuracies = Classifier_Evaluation(dataloaders_dict,model,sub_dir,device,class_names)
-                KNN_acc[split] = classifier_accuracies[0]
-                SVM_acc[split] = classifier_accuracies[1]
-                XGB_acc[split] = classifier_accuracies[2]
                 
             print("Done!") ###
             
@@ -282,12 +273,7 @@ def main(args, params):
             save_metric(sub_dir,'Test_Accuracy',test_dict['test_acc'])
             save_metric(sub_dir,'Train_Accuracy',train_acc[split])
             save_metric(sub_dir, 'Val_Accuracy', val_acc[split])
-            save_metric(sub_dir, 'MCC', MCC[split])
-            if include_classifier_outputs:
-                save_metric(sub_dir, 'KNN_Accuracy', KNN_acc)
-                save_metric(sub_dir, 'SVM_Accuracy', SVM_acc)
-                save_metric(sub_dir, 'XGB_Accuracy', XGB_acc)
-                    
+            save_metric(sub_dir, 'MCC', MCC[split])                    
         
             print('**********Run ' + str(split+1) + ' Finished**********')
         
@@ -306,10 +292,7 @@ def main(args, params):
         save_avg_std_metric(directory, 'Val_Accuracy', val_acc)
         save_avg_std_metric(directory, 'FDR', FDR_scores, axis=1)
         save_avg_std_metric(directory, 'Log_FDR', FDR_scores, axis=1)
-        if include_classifier_outputs:
-            save_avg_std_metric(directory, 'KNN_Accuracy', KNN_acc)
-            save_avg_std_metric(directory, 'SVM_Accuracy', SVM_acc)
-            save_avg_std_metric(directory, 'XGB_Accuracy', XGB_acc)
+  
         
         np.savetxt((directory+'List_Loss.txt'),loss.reshape(-1,1),fmt='%.2f')
         
@@ -318,10 +301,6 @@ def main(args, params):
         np.savetxt((directory + 'List_MCC.txt'), MCC.reshape(-1, 1), fmt='%.2f')
         np.savetxt((directory + 'test_List_FDR_scores.txt'), FDR_scores, fmt='%.2E')
         np.savetxt((directory + 'test_List_log_FDR_scores.txt'), log_FDR_scores, fmt='%.2f')
-        if include_classifier_outputs:
-            np.savetxt((directory + 'List_KNN_Accuracy.txt'), KNN_acc.reshape(-1, 1), fmt='%.2f')
-            np.savetxt((directory + 'List_SVM_Accuracy.txt'), SVM_acc.reshape(-1, 1), fmt='%.2f')
-            np.savetxt((directory + 'List_XGB_Accuracy.txt'), XGB_acc.reshape(-1, 1), fmt='%.2f')
         plt.close("all")
         
         setting_count += 1
@@ -387,8 +366,8 @@ def parse_args():
                     help='Fusion method for n>1 channels (default: None); Options: None, grayscale, conv')
     parser.add_argument('--single_setting', default=False, action=argparse.BooleanOptionalAction,
                         help='Run a single setting')
-    parser.add_argument('--include_classifier_outputs', default=False, action=argparse.BooleanOptionalAction,
-                        help='True will include the classifier outputs')
+    parser.add_argument('--TSNE_visual', default=False, action=argparse.BooleanOptionalAction,
+                        help='Generates the TSNE visual')
     args = parser.parse_args()
     return args
 
