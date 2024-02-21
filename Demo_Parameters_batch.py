@@ -155,47 +155,41 @@ def Parameters(args,learn_hist=True,learn_edge_kernels=True,feature_init=True,
     #If set to True, TSNE of histogram and GAP features will be created
     #Number of images to view for TSNE (defaults to all training imgs unless
     #value is less than total training images).
-    TSNE_visual = False # Toggle
+    TSNE_visual = True
     Separate_TSNE = False
     Num_TSNE_images = 10000
     
     #Visualization parameters for figures
-    fig_size = 12
-    font_size = 16
+    fig_size = 16
+    font_size = 30
 
     # Fusion
     fusion_method = args.fusion_method
     
     ######## ONLY CHANGE PARAMETERS ABOVE ########
-    Data_dirs = {'Fashion_MNIST': './Datasets/',
-                 'Derma_MNIST': './Datasets/Derma_MNIST',    
+    Data_dirs = {'Fashion_MNIST': './Datasets/',   
                  'PRMI': './Datasets/PRMI',
                  'BloodMNIST': './Datasets/BloodMNIST'}
     
     Model_names = {'Fashion_MNIST': 'Neural_EHD',
-                   'Derma_MNIST': 'Neural_EHD',
                    'PRMI': 'Neural_EHD',
                    'BloodMNIST': 'Neural_EHD'}
     
     num_classes = {'Fashion_MNIST': 10,
-                   'Derma_MNIST': 7,
                    'PRMI': 4,
                    'BloodMNIST': 8}
     
     Class_names = {'Fashion_MNIST': ['T-shirt/top', 'Trouser', 'Pullover', 'Dress',
                                      'Coat', 'Sandal', 'Shirt', 'Sneaker','Bag',
                                      'Ankle boot'],
-                    'Derma_MNIST': [0,1,2,3,4,5,6],
                     'PRMI': ['cotton', 'papaya', 'sunflower', 'switchgrass'],
                     'BloodMNIST': [0, 1, 2, 3, 4, 5, 6, 7]}    
                  
     Splits = {'Fashion_MNIST': 3,
-              'Derma_MNIST': 3,
               'PRMI': 5,
               'BloodMNIST' : 3}
     
     Sizes = {'Fashion_MNIST': 28,
-             'Derma_MNIST': center_size,
              'PRMI': center_size, 
              'BloodMNIST': center_size}    
     
