@@ -12,6 +12,7 @@ import torch
 from matplotlib import offsetbox
 from Utils.Compute_FDR import Compute_Fisher_Score
 from sklearn.model_selection import train_test_split
+import pdb
 
 def plot_components(data, proj, images=None, ax=None,
                     thumb_frac=0.05, cmap='Greys'):
@@ -41,7 +42,7 @@ def Generate_TSNE_visual(dataloaders_dict,model,sub_dir,device,class_names,
         
       #TSNE visual of (all) data
       #Get labels and outputs
-        for phase in ['train', 'val', 'test']:
+        for phase in ['test']:
             GT_val = np.array(0)
             data_indices = np.array(0)
             model.eval()
@@ -85,7 +86,8 @@ def Generate_TSNE_visual(dataloaders_dict,model,sub_dir,device,class_names,
             saved_imgs = np.concatenate(saved_imgs,axis=0)
             
             #Compute FDR scores using all data
-            FDR_scores, log_FDR_scores = Compute_Fisher_Score(features_extracted,GT_val)
+            num_classes = len(np.unique(GT_val))
+            FDR_scores, log_FDR_scores = np.zeros(num_classes), np.zeros(num_classes)
             np.savetxt((sub_dir+'{}_FDR.txt'.format(phase)),FDR_scores,fmt='%.2E')
             np.savetxt((sub_dir+'{}_log_FDR.txt'.format(phase)),log_FDR_scores,fmt='%.2f')
     
@@ -98,8 +100,6 @@ def Generate_TSNE_visual(dataloaders_dict,model,sub_dir,device,class_names,
                 y = features_embedded[[np.where(GT_val==texture)],1]
                 
                 ax6.scatter(x, y, color = colors[texture,:],label=class_names[texture])
-             
-            plt.title('TSNE Visualization of {} Data Features'.format(phase.capitalize()))
             
             box = ax6.get_position()
             ax6.set_position([box.x0, box.y0 + box.height * 0.1, box.width, box.height * 0.9])
