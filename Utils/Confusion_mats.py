@@ -31,6 +31,7 @@ def plot_confusion_matrix(cm, classes,
    if show_percent:
        cm_percent = 100*cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
        im = ax.imshow(cm_percent,interpolation='nearest',cmap=cmap,vmin=0,vmax=100)
+       #plt.title(title)
        cb = plt.colorbar(im,fraction=0.046,pad=0.04)
        cb.ax.tick_params(labelsize=fontsize)
    else:
@@ -52,7 +53,7 @@ def plot_confusion_matrix(cm, classes,
             s = format(cm[i, j], fmt)
         ax.text(j, i, s,
                  horizontalalignment="center",
-                 color="white" if cm[i, j] > thresh else "black")
+                 color="white" if cm[i, j] > thresh else "black",fontsize=fontsize)
        
    ax.set(xticks=np.arange(len(classes)),
                    yticks=np.arange(len(classes)),
@@ -60,7 +61,7 @@ def plot_confusion_matrix(cm, classes,
                    yticklabels=classes)
    
    ax.set_ylim((len(classes) - 0.5, -0.5))
-   plt.setp(ax.get_xticklabels(), rotation=90)
+   plt.setp(ax.get_xticklabels(), rotation=45)
    plt.tight_layout()
        
 def plot_avg_confusion_matrix(cm, classes,
@@ -114,13 +115,14 @@ def plot_avg_confusion_matrix(cm, classes,
             
         ax.text(j, i, s,
                 horizontalalignment="center",
-                color="white" if cm[i, j] > thresh else "black")
+                color="white" if cm[i, j] > thresh else "black",fontsize=fontsize)
         
     ax.set(xticks=np.arange(len(classes)),
                    yticks=np.arange(len(classes)),
                    xticklabels=classes,
                    yticklabels=classes)
+
     
     ax.set_ylim((len(classes) - 0.5, -0.5))
-    plt.setp(ax.get_xticklabels(), rotation=90)
+    plt.setp(ax.get_xticklabels(), rotation=45)
     plt.tight_layout()
