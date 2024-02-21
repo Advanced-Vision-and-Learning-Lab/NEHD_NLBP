@@ -14,9 +14,10 @@ class NLBPLayer(nn.Module):
                  window_size= [3,3], num_bins= 4,
                  stride= 1, padding= 0, normalize_count= False,  normalize_bins= True,
                  count_include_pad= False, ceil_mode= False, LBP_init= True, learn_kernel= True,
-                 learn_base= True, normalize_kernel= False, padding_mode= 'reflect',
-                 dilation= 1, threshold= nn.Sigmoid()): #Todo: Please make the threshold a string as opposed to function
+                 learn_base= True, learn_hist=True, normalize_kernel= False, padding_mode= 'reflect',
+                 dilation= 1, threshold= nn.ReLU()): #Todo: Please make the threshold a string as opposed to function
 
+        #Function: nn.Sigmoid()
         # inherit nn.module
         super(NLBPLayer, self).__init__()
 
@@ -40,6 +41,11 @@ class NLBPLayer(nn.Module):
         self.R = R
         self.P = P
         self.aggregation_type = aggregation_type
+        self.learn_hist = learn_hist
+        
+        #Approach to have the same output of LBP with a lot of background information (e.g., FashionMNIST)
+        # if self.LBP_init:
+        #     self.threshold = nn.Sequential(nn.Threshold(0, 1),nn.ReLU())
         
         #Compute kernel size and out channels
         self.kernel_size = int(2*self.R + 1)
@@ -60,8 +66,6 @@ class NLBPLayer(nn.Module):
                                               count_include_pad= self.count_include_pad,
                                               ceil_mode= self.ceil_mode)
 
-    
-
         # Set the vars that needed helper funcs
         self.weighted_sum = self.set_weighted_sum()
 
@@ -76,6 +80,14 @@ class NLBPLayer(nn.Module):
             self.edge_responses.weight.requires_grad = True
         else:
             self.edge_responses.weight.requires_grad = False
+            
+        # Set the learning parameters for the histogram layer
+        if self.learn_hist:
+            self.histogram_layer.centers.requires_grad = True
+            self.histogram_layer.widths.requires_grad = True
+        else:
+            self.histogram_layer.centers.requires_grad = False
+            self.histogram_layer.widths.requires_grad = False
 
         #Set values for layers for analysis later            
         self.centers = self.histogram_layer.bin_centers_conv.bias
@@ -116,7 +128,7 @@ class NLBPLayer(nn.Module):
         self.edge_responses.weight.data.fill_(0)
 
         # Set center kernel value to 1
-        self.edge_responses.weight.data[:, :, self.R, self.R] = torch.tensor(1)
+        self.edge_responses.weight.data[:, :, self.R, self.R] = torch.tensor(-1)
 
         # Get indices of weights surrounding center value
         index = torch.arange(0, self.kernel_size)
@@ -131,7 +143,7 @@ class NLBPLayer(nn.Module):
 
         # Set neighbors to have weight of negative one for norm and one for cosine
         sim_space = torch.arange(0, self.out_channels * self.in_channels)
-        self.edge_responses.weight.data[sim_space, :, neighbors[:, 0], neighbors[:, 1]] = -1
+        self.edge_responses.weight.data[sim_space, :, neighbors[:, 0], neighbors[:, 1]] = 1
 
         # Keep weights fixed to keep meaning of feature, may allow update later (done outside layer)
         self.edge_responses.weight.requires_grad = False
@@ -151,7 +163,7 @@ class NLBPLayer(nn.Module):
         self.histogram_layer.bin_centers_conv.bias.data = bin_center_init.repeat(self.in_channels)
         
         # Set the weight data of bin_widths_conv to have initial widths of 0.01 (wider bin width)
-        self.histogram_layer.bin_widths_conv.weight.data = 0.01 * torch.ones(
+        self.histogram_layer.bin_widths_conv.weight.data = torch.ones(
             self.histogram_layer.bin_widths_conv.weight.shape
         )
         return self.histogram_layer
@@ -180,6 +192,6 @@ class NLBPLayer(nn.Module):
 
         #Pass through histogram layer (binning)
         xx = self.histogram_layer(xx)
-
+        
         return xx
       
