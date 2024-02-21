@@ -21,9 +21,9 @@ import torchvision.transforms as T
 ## Local external libraries
 from Datasets.KTH_TIPS_2b import KTH_TIPS_2b_data
 from sklearn.model_selection import train_test_split
-from Datasets.Pytorch_Datasets import MNIST_Index, FashionMNIST_Index, SVHN_Index, CIFAR10_Index, UCMerced_Index, EUROSAT_Index
+from Datasets.Pytorch_Datasets import FashionMNIST_Index
 from Datasets.PRMIDataset import PRMIDataset
-from Datasets.Pytorch_Datasets import DermaMNIST, BloodMNIST
+from Datasets.Pytorch_Datasets import BloodMNIST
 
 def get_mean_1Ch(img_dataset):
     '''
@@ -73,7 +73,6 @@ def get_mean_3Ch(img_dataset):
 
     # Calculate the mean for each channel
     mean = total_sum / len(img_dataset)
-    print((mean[0].item(), mean[1].item(), mean[2].item(),))
     return ((mean[0].item(), mean[1].item(), mean[2].item(),))
 
 def get_std_3Ch(img_dataset):
@@ -92,7 +91,6 @@ def get_std_3Ch(img_dataset):
 
     # Calculate the standard deviation for each channel
     std = total_std_sum / len(img_dataset)
-    print((std[0].item(), std[1].item(), std[2].item(),))
     return ((std[0].item(), std[1].item(), std[2].item(),))
 
 def Prepare_DataLoaders(Network_parameters, split=None,
@@ -125,7 +123,6 @@ def Prepare_DataLoaders(Network_parameters, split=None,
         # Now get the mean, std for the train only dataset
         mean = get_mean_1Ch(train_dataset)
         std = get_std_1Ch(train_dataset)
-        print(mean, std)
         ####
         validation_dataset = torch.utils.data.Subset(img_dataset, val_indices)
         
@@ -165,8 +162,6 @@ def Prepare_DataLoaders(Network_parameters, split=None,
             # Now get the mean, std for the train only dataset
             mean = get_mean_1Ch(train_dataset)
             std = get_std_1Ch(train_dataset)
-            print("Mean and std for PRMI")
-            print(mean, std)
             ####
         else: 
             print("Implementing PRMI as Conv Fusion or Indepedently")
@@ -192,8 +187,6 @@ def Prepare_DataLoaders(Network_parameters, split=None,
             # Now get the mean, std for the train only dataset
             mean = get_mean_3Ch(train_dataset)
             std = get_std_3Ch(train_dataset)
-            print("Mean and std for PRMI")
-            print(mean, std)
             ####
 
         # Create the transform to normalize the data
@@ -208,54 +201,6 @@ def Prepare_DataLoaders(Network_parameters, split=None,
         train_dataset = PRMIDataset(data_dir, subset='train', transform=train_dataset.transform)
         validation_dataset = PRMIDataset(data_dir, subset='val', transform=validation_dataset.transform)
         test_dataset = PRMIDataset(data_dir, subset='test', transform=test_dataset.transform)
-
-    elif Dataset == 'Derma_MNIST':
-        print("Implementing DermaMNIST as color")
-        initial_transform = {
-            'train': transforms.Compose([
-                #transforms.Grayscale(num_output_channels=1),
-                transforms.Resize(Network_parameters['resize_size']),
-                transforms.RandomResizedCrop(Network_parameters['center_size'],scale=(.8,1.0)),
-                transforms.RandomHorizontalFlip(),
-                transforms.ToTensor(),
-            ]),
-            'test': transforms.Compose([
-                #transforms.Grayscale(num_output_channels=1),
-                transforms.Resize(Network_parameters['resize_size']),
-                transforms.CenterCrop(Network_parameters['center_size']),
-                transforms.ToTensor(),
-            ]),
-        }
-        # Call train and test
-        train_dataset = DermaMNIST(data_dir, split='train', transform = initial_transform['train'], target_transform=None)
-        test_dataset = DermaMNIST(data_dir, split='test', transform = initial_transform['test'], target_transform=None)
-        validation_dataset = DermaMNIST(data_dir, split='val', transform = initial_transform['test'], target_transform=None)
-
-        # Now get the mean, std for the train only dataset 
-        mean = get_mean_3Ch(train_dataset)
-        std = get_std_3Ch(train_dataset)
-        print("Mean and std for DermaMNIST")
-        print(mean, std)
-        ####
-       
-
-        # Create the transform to normalize the data
-        normalize_transform = transforms.Normalize(mean, std)
-
-        # Apply the transforms to the datasets
-        train_dataset.transform = transforms.Compose([initial_transform['train'], normalize_transform])
-        validation_dataset.transform = transforms.Compose([initial_transform['test'], normalize_transform])
-        test_dataset.transform = transforms.Compose([initial_transform['test'], normalize_transform])
-
-        # Ensure this works as expected
-        train_dataset = DermaMNIST(data_dir, split='train', transform = train_dataset.transform, target_transform= None)
-        test_dataset = DermaMNIST(data_dir, split='test', transform =test_dataset.transform, target_transform= None)
-        validation_dataset = DermaMNIST(data_dir, split='val', transform = test_dataset.transform, target_transform= None)
-
-        # Flatten the labels
-        train_dataset.label = train_dataset.label.flatten()
-        test_dataset.label = test_dataset.label.flatten()
-        validation_dataset.label = validation_dataset.label.flatten()
 
     elif Dataset == 'BloodMNIST':
         print("Implementing BloodMNIST as color")
@@ -280,8 +225,6 @@ def Prepare_DataLoaders(Network_parameters, split=None,
         # Now get the mean, std for the train only dataset
         mean = get_mean_3Ch(train_dataset)
         std = get_std_3Ch(train_dataset)
-        print("Mean and std for BloodMNIST")
-        print(mean, std)
        
 
         # Create the transform to normalize the data
