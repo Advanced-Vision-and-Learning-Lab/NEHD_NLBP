@@ -1,6 +1,7 @@
 ## PyTorch dependencies
 import torch.nn as nn
 import torch
+import pdb
 
 class HistogramNetwork(nn.Module):
     def __init__(self,histogram_layer,num_ftrs,num_classes,reconstruction=False,preprocess_layer = None):
@@ -20,8 +21,8 @@ class HistogramNetwork(nn.Module):
         ###
             
         
-        #Define histogram layer and fc
-        self.histogram_layer = histogram_layer
+        #Define neural feature
+        self.neural_feature = histogram_layer
         
         if reconstruction:
             self.fc = torch.nn.Sequential()
@@ -32,8 +33,9 @@ class HistogramNetwork(nn.Module):
     def forward(self,x):
         # Preprocess
         x = self.preprocess_layer(x)
+        
         #Extract features from histogram layer and pass to fully connected layer
-        feats = self.histogram_layer(x)
+        feats = self.neural_feature(x)
 
         #if reconstructon experiments, do not flatten tensor
         #else classification, flatten tensor
