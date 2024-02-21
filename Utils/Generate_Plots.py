@@ -13,8 +13,14 @@ import matplotlib.pyplot as plt
 import os
 import scipy.stats
 
+#Pytorch libraries
+import torch.nn as nn
+import torch
+
 ## Local external libraries
 from Utils.Save_Results import generate_filename
+
+import pdb
 
 def inverse_normalize(tensor, mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)):
     for t, m, s in zip(tensor, mean, std):
@@ -75,7 +81,8 @@ def plot_kernels(EHD_masks,Hist_masks,phase,epoch,Network_parameters,split):
     #Remove extra dimension on histogram masks tensor
     Hist_masks = Hist_masks.squeeze(1)
     num_orientations = Hist_masks.size(0)//Network_parameters['in_channels'] 
-    #^^ Ax size is 8 when running debug
+    
+    #^^ Ax size is 8 when running debug (previously had -1)
     for temp_ang in range(0, num_orientations):
         
         if temp_ang == (num_orientations-1):
@@ -134,7 +141,7 @@ def plot_kernels(EHD_masks,Hist_masks,phase,epoch,Network_parameters,split):
         pass
     plt.close(fig=fig)
     
-def plot_FMS_GAP(images,EHD_outputs,outputs,phase,epoch,Network_parameters,split,
+def plot_FMS_GAP_EHD(images,EHD_outputs,outputs,phase,epoch,parameters,split,
              img_max=5):
     
     #Take difference between estimated and true outputs 
@@ -149,9 +156,9 @@ def plot_FMS_GAP(images,EHD_outputs,outputs,phase,epoch,Network_parameters,split
     else:
         mean = (.5,)
         std = (.5,)
-        cmap = 'pink'
+        cmap = 'gray'
         
-    angles = np.arange(0,360,Network_parameters['angle_res'])
+    angles = np.arange(0,360,parameters['angle_res'])
     angle_names = []
     bin_names = []
     bin_count = 0
@@ -164,9 +171,8 @@ def plot_FMS_GAP(images,EHD_outputs,outputs,phase,epoch,Network_parameters,split
     
     for img in img_count:
         fig, ax = plt.subplots(1,4,figsize=(12,6))
-        plt.subplots_adjust(wspace=.8,hspace=.4)
-        
-        # ax[0,0].set_ylabel('Input Image',rotation=90,size='large')
+        plt.subplots_adjust(wspace=.4,hspace=.4)
+
         #Change to pink for SAS data
         if images.shape[1] == 3:
             temp_img = inverse_normalize(images[img],mean=mean,std=std).permute(1,2,0).detach().cpu().numpy()
@@ -175,8 +181,6 @@ def plot_FMS_GAP(images,EHD_outputs,outputs,phase,epoch,Network_parameters,split
             
         im = ax[0].imshow(temp_img,cmap=cmap,aspect="auto")
         ax[0].set_box_aspect(1)
-        if not(images.shape[1] == 3):
-            plt.colorbar(im,ax=ax[0],fraction=0.046, pad=0.04)
         
     
         ax[0].set_yticks([])
@@ -187,12 +191,12 @@ def plot_FMS_GAP(images,EHD_outputs,outputs,phase,epoch,Network_parameters,split
         rects = ax[1].bar(y_pos,EHD_outputs[img,:,0,0].detach().cpu().numpy())
         ax[1].set_box_aspect(1)
         ax[1].set_ylabel('Avg Feature Count')
-        ax[1].set_title('EHD')
+        ax[1].set_title('{}'.format(parameters['feature']))
         
         rects = ax[2].bar(y_pos,outputs[img,:,0,0].detach().cpu().numpy())
         ax[2].set_box_aspect(1)
         ax[2].set_ylabel('Avg Feature Count')
-        ax[2].set_title('NEHD')
+        ax[2].set_title('N{}'.format(parameters['feature']))
         
         rects = ax[3].bar(y_pos,diff_outputs[img,:,0,0])
         ax[3].set_box_aspect(1)
@@ -202,7 +206,7 @@ def plot_FMS_GAP(images,EHD_outputs,outputs,phase,epoch,Network_parameters,split
         
         plt.tight_layout()
     
-        filename = generate_filename(Network_parameters,split)
+        filename = generate_filename(parameters,split)
         filename = filename + phase + '/'
         
         if not os.path.exists(filename):
@@ -225,7 +229,7 @@ def plot_FMS_GAP(images,EHD_outputs,outputs,phase,epoch,Network_parameters,split
                 pass
         plt.close(fig=fig)
 
-def plot_FMS(images,EHD_outputs,outputs,phase,epoch,Network_parameters,split,
+def plot_FMS_EHD(images,EHD_outputs,outputs,phase,epoch,parameters,split,
              img_max=5):
     
     #Take difference between estimated and true outputs 
@@ -238,7 +242,6 @@ def plot_FMS(images,EHD_outputs,outputs,phase,epoch,Network_parameters,split,
     if np.amax(outputs.detach().cpu().numpy()) > plot_max:
         plot_max = np.amax(outputs.detach().cpu().numpy())
         
-    #Change to pink for SAS data
     if images.shape[1] == 3:
         mean=(0.485, 0.456, 0.406)
         std=(0.229, 0.224, 0.225)
@@ -253,27 +256,16 @@ def plot_FMS(images,EHD_outputs,outputs,phase,epoch,Network_parameters,split,
     for img in img_count:
         fig, ax = plt.subplots(3,EHD_outputs.size(1)+1,figsize=(24,12))
         plt.subplots_adjust(wspace=.4,hspace=.4)
-        angles = np.arange(0,360,Network_parameters['angle_res'])
-        
-        # ax[0,0].set_ylabel('Input Image',rotation=90,size='large')
-        #Change to pink for SAS data
+        angles = np.arange(0,360, parameters['angle_res'])
+       
         if images.shape[1] == 3:
             temp_img = inverse_normalize(images[img],mean=mean,std=std).permute(1,2,0).detach().cpu().numpy()
         else:
             temp_img = inverse_normalize(images[img],mean=mean,std=std).permute(1,2,0)[:,:,0].detach().cpu().numpy()
             
         im = ax[0,0].imshow(temp_img,cmap=cmap)
-        if not(images.shape[1] == 3):
-            plt.colorbar(im,ax=ax[0,0],fraction=0.046, pad=0.04)
-        
-        # ax[0,1].set_ylabel('Input Image',rotation=90,size='large')
         im = ax[1,0].imshow(temp_img,cmap=cmap)
-        if not(images.shape[1] == 3):
-            plt.colorbar(im,ax=ax[1,0],fraction=0.046, pad=0.04)
-    
         im = ax[2,0].imshow(temp_img,cmap=cmap)
-        if not(images.shape[1] == 3):
-            plt.colorbar(im,ax=ax[2,0],fraction=0.046, pad=0.04)
         
         ax[0,0].set_yticks([])
         ax[1,0].set_yticks([])
@@ -284,13 +276,13 @@ def plot_FMS(images,EHD_outputs,outputs,phase,epoch,Network_parameters,split,
         
     
         for temp_ang in range(0,EHD_outputs.size(1)):
-            im = ax[0,temp_ang+1].imshow(EHD_outputs[img][temp_ang].detach().cpu().numpy())
-            im2 = ax[1,temp_ang+1].imshow(outputs[img][temp_ang].detach().cpu().numpy())
-            im3 = ax[2,temp_ang+1].imshow(abs(diff_outputs[img][temp_ang]))
+            im = ax[0,temp_ang+1].imshow(EHD_outputs[img][temp_ang].detach().cpu().numpy(),vmin=0,vmax=1,cmap='coolwarm')
+            im2 = ax[1,temp_ang+1].imshow(outputs[img][temp_ang].detach().cpu().numpy(),vmin=0,vmax=1,cmap='coolwarm')
+            im3 = ax[2,temp_ang+1].imshow(abs(diff_outputs[img][temp_ang]),vmin=0,vmax=1,cmap='coolwarm')
             if temp_ang == EHD_outputs.size(1)-1:
-                 ax[0,temp_ang+1].set_title('No Edge')
-                 ax[1,temp_ang+1].set_title('Bin {}'.format(temp_ang+1))
-                 ax[2,temp_ang+1].set_title('No Edge')
+                 ax[0,temp_ang+1].set_title('No Edge', fontsize=16)
+                 ax[1,temp_ang+1].set_title('Bin {}'.format(temp_ang+1),fontsize=16)
+                 ax[2,temp_ang+1].set_title('No Edge',fontsize=16)
                  ax[0,temp_ang+1].set_yticks([])
                  ax[1,temp_ang+1].set_yticks([])
                  ax[2,temp_ang+1].set_yticks([])
@@ -298,9 +290,9 @@ def plot_FMS(images,EHD_outputs,outputs,phase,epoch,Network_parameters,split,
                  ax[1,temp_ang+1].set_xticks([])
                  ax[2,temp_ang+1].set_xticks([])
             else:
-                ax[0,temp_ang+1].set_title(str(angles[temp_ang])+u'\N{DEGREE SIGN}')
-                ax[1,temp_ang+1].set_title('Bin {}'.format(temp_ang+1))
-                ax[2,temp_ang+1].set_title(str(angles[temp_ang])+u"\N{DEGREE SIGN}")
+                ax[0,temp_ang+1].set_title(str(angles[temp_ang])+u'\N{DEGREE SIGN}',fontsize=16)
+                ax[1,temp_ang+1].set_title('Bin {}'.format(temp_ang+1),fontsize=16)
+                ax[2,temp_ang+1].set_title(str(angles[temp_ang])+u"\N{DEGREE SIGN}",fontsize=16)
                 ax[0,temp_ang+1].set_yticks([])
                 ax[1,temp_ang+1].set_yticks([])
                 ax[2,temp_ang+1].set_yticks([])
@@ -313,12 +305,205 @@ def plot_FMS(images,EHD_outputs,outputs,phase,epoch,Network_parameters,split,
             plt.colorbar(im3,ax=ax[2,temp_ang+1],fraction=0.046, pad=0.04)
        
         
-        ax[0,1].set_ylabel('EHD True Outputs',rotation=90,size='small')
-        ax[1,1].set_ylabel('Hist Layer Outputs',rotation=90,size='small')
-        ax[2,1].set_ylabel('Absolute Differences',rotation=90,size='small')
+        ax[0,1].set_ylabel('{} Outputs'.format(parameters['feature']),rotation=90,fontsize=16)
+        ax[1,1].set_ylabel('N{} Outputs'.format(parameters['feature']),rotation=90,fontsize=16)
+        ax[2,1].set_ylabel('Absolute Differences',rotation=90,fontsize=16)
         plt.tight_layout()
     
-        filename = generate_filename(Network_parameters,split)
+        filename = generate_filename(parameters,split)
+        filename = filename + phase + '/'
+        
+        if not os.path.exists(filename):
+            try:
+                os.makedirs(filename)
+            except:
+                pass
+        
+        if epoch is not None:
+            plt.suptitle('Epoch {} during {} phase'.format(epoch+1,phase))
+            try:
+                fig.savefig(filename+'Image_{}_Epoch_{}_Phase_{}.png'.format(img,epoch+1,phase),dpi=fig.dpi)
+            except:
+                pass
+        else:
+            plt.suptitle('Best Epoch for {} phase'.format(phase))
+            try:
+                plt.savefig(filename+'Image_{}_Best_Epoch_Phase_{}.png'.format(img,phase),dpi=fig.dpi)
+            except:
+                pass
+            
+        plt.close(fig=fig)
+  
+    
+def plot_FMS_GAP_LBP(images,LBP_outputs,outputs,phase,epoch,feature_layer,model,
+                     parameters,split, img_max=5):
+
+    #Take difference between estimated and true outputs 
+    diff_outputs = abs((LBP_outputs-outputs)).detach().cpu().numpy()
+    img_count = np.arange(0,img_max,1)
+    
+    if images.shape[1] == 3:
+        mean=(0.485, 0.456, 0.406)
+        std=(0.229, 0.224, 0.225)
+        cmap = None
+    else:
+        mean = (0,)
+        std = (1,)
+        cmap = 'gray'
+        
+    bins = np.arange(1,parameters['numBins'])
+    bin_names = []
+    bin_count = 0
+    for hist_bin in bins:
+        bin_names.append('Bin {}'.format(bin_count+1))
+        bin_count += 1
+    bin_names.append('Bin {}'.format(bin_count+1))
+    
+    for img in img_count:
+        fig, ax = plt.subplots(2,3,figsize=(14,7))
+        plt.subplots_adjust(wspace=.4,hspace=.4)
+        
+        if images.shape[1] == 3:
+            temp_img = inverse_normalize(images[img],mean=mean,std=std).permute(1,2,0).detach().cpu().numpy()
+        else:
+            temp_img = inverse_normalize(images[img],mean=mean,std=std).permute(1,2,0)[:,:,0].detach().cpu().numpy()
+            
+        im = ax[0,0].imshow(temp_img,cmap=cmap,aspect="auto")
+        im = ax[1,0].imshow(temp_img,cmap=cmap,aspect="auto")
+        ax[0,0].set_title('Input Image',fontsize=24)
+        ax[1,0].set_title('Input Image',fontsize=24)
+        
+        ax[0,0].set_yticks([])
+        ax[0,0].set_xticks([])
+        ax[1,0].set_yticks([])
+        ax[1,0].set_xticks([])
+        
+        #Compute avg count of feature values
+        y_pos = np.arange(len(bin_names))
+        rects = ax[0,2].bar(y_pos,LBP_outputs[img,:].detach().cpu().numpy())
+        max_value = LBP_outputs[img,:].max().detach().cpu().numpy() + .01
+        ax[0,2].set_ylim([0,max_value])
+        ax[0,2].set_box_aspect(1)
+        ax[0,2].set_ylabel('Normalized Count',fontsize=16)
+        ax[0,2].set_title('{} Histogram'.format(parameters['feature']),fontsize=24)
+        
+        rects = ax[1,2].bar(y_pos,outputs[img,:].detach().cpu().numpy())
+        ax[1,2].set_ylim([0,max_value])
+        ax[1,2].set_box_aspect(1)
+        ax[1,2].set_ylabel('Normalized Count',fontsize=16)
+        ax[1,2].set_title('N{} Histogram'.format(parameters['feature']),fontsize=24)
+        
+        #Get encodings
+        LBP_encoding = feature_layer((images[img].unsqueeze(0)))
+        
+        #Revisit for RGB
+        im = ax[0,1].imshow(LBP_encoding[0,0].detach().cpu().numpy(),cmap='gist_gray',aspect="auto")
+        ax[0,1].set_title('{} Encoding'.format(parameters['feature']),fontsize=24)
+        plt.colorbar(im,ax=ax[0,1],fraction=0.046, pad=0.04)
+        
+        #Remove histogram layer to get encoding
+        model.neural_feature.histogram_layer = nn.Sequential()
+        NEHD_encoding, _ = model(images[img].unsqueeze(0))
+        
+        im = ax[1,1].imshow(NEHD_encoding[0,0].detach().cpu().numpy(),cmap='gist_gray',aspect="auto")
+        ax[1,1].set_title('N{} Encoding'.format(parameters['feature']),fontsize=24)
+        plt.colorbar(im,ax=ax[1,1],fraction=0.046, pad=0.04)
+        
+        ax[0,1].set_yticks([])
+        ax[0,1].set_xticks([])
+        ax[1,1].set_yticks([])
+        ax[1,1].set_xticks([])
+        
+        plt.tight_layout()
+    
+        filename = generate_filename(parameters,split)
+        filename = filename + phase + '/'
+        
+        if not os.path.exists(filename):
+            try:
+                os.makedirs(filename)
+            except:
+                pass
+        
+        if epoch is not None:
+            try:
+                fig.savefig(filename+'Image_{}_Epoch_{}_Phase_{}.png'.format(img,epoch+1,phase),dpi=fig.dpi)
+            except:
+                pass
+        else:
+            try:
+                plt.savefig(filename+'Image_{}_Best_Epoch_Phase_{}.png'.format(img,phase),dpi=fig.dpi)
+            except:
+                pass
+        plt.close(fig=fig)
+        
+def plot_FMS_LBP(images,LBP_outputs,outputs,phase,epoch,feature_layer,
+                     parameters,split, img_max=5):
+    
+    import pdb
+    pdb.set_trace()
+    #Take difference between estimated and true outputs 
+    diff_outputs = abs((LBP_outputs-outputs)).detach().cpu().numpy()
+    img_count = np.arange(0,img_max,1)
+    
+    #Change to pink for data
+    if images.shape[1] == 3:
+        mean=(0.485, 0.456, 0.406)
+        std=(0.229, 0.224, 0.225)
+        cmap = None
+    else:
+        mean = (.5,)
+        std = (.5,)
+        cmap = 'gray'
+        
+    angles = np.arange(0,360,parameters['angle_res'])
+    angle_names = []
+    bin_names = []
+    bin_count = 0
+    for angle in angles:
+        angle_names.append(u'{}\N{DEGREE SIGN}'.format(angle))
+        bin_names.append('Bin {}'.format(bin_count+1))
+        bin_count += 1
+    
+    for img in img_count:
+        fig, ax = plt.subplots(1,4,figsize=(12,6))
+        plt.subplots_adjust(wspace=.4,hspace=.4)
+        
+        if images.shape[1] == 3:
+            temp_img = inverse_normalize(images[img],mean=mean,std=std).permute(1,2,0).detach().cpu().numpy()
+        else:
+            temp_img = inverse_normalize(images[img],mean=mean,std=std).permute(1,2,0)[:,:,0].detach().cpu().numpy()
+            
+        im = ax[0].imshow(temp_img,cmap=cmap,aspect="auto")
+        ax[0].set_box_aspect(1)
+        if not(images.shape[1] == 3):
+            plt.colorbar(im,ax=ax[0],fraction=0.046, pad=0.04)
+        
+    
+        ax[0].set_yticks([])
+        ax[0].set_xticks([])
+        
+        #Compute avg count of feature values
+        y_pos = np.arange(len(angle_names))
+        rects = ax[1].bar(y_pos,LBP_outputs[img,:,0,0].detach().cpu().numpy())
+        ax[1].set_box_aspect(1)
+        ax[1].set_ylabel('Avg Feature Count')
+        ax[1].set_title('{}'.format(parameters['feature']))
+        
+        rects = ax[2].bar(y_pos,outputs[img,:,0,0].detach().cpu().numpy())
+        ax[2].set_box_aspect(1)
+        ax[2].set_ylabel('Avg Feature Count')
+        ax[2].set_title('N{}'.format(parameters['feature']))
+        
+        rects = ax[3].bar(y_pos,diff_outputs[img,:,0,0])
+        ax[3].set_box_aspect(1)
+        ax[3].set_ylabel('Avg Feature Count')
+        ax[3].set_title('Absolute Differences')
+       
+        
+        plt.tight_layout()
+    
+        filename = generate_filename(parameters,split)
         filename = filename + phase + '/'
         
         if not os.path.exists(filename):
