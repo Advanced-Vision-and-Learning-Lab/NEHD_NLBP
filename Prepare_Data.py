@@ -19,7 +19,6 @@ from torch.utils.data.sampler import SubsetRandomSampler #added
 import torchvision.transforms as T
 
 ## Local external libraries
-from Datasets.KTH_TIPS_2b import KTH_TIPS_2b_data
 from sklearn.model_selection import train_test_split
 from Datasets.Pytorch_Datasets import FashionMNIST_Index
 from Datasets.PRMIDataset import PRMIDataset

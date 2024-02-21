@@ -66,10 +66,9 @@ def main(args,params):
 
     
 
-
-    #Need to update code to run baseline model
+    settings_params_dict = {}
     for setting in settings[setting_count:]: 
-    
+
         #Set initial parameters
         if mode == 'config':
             Network_parameters = Parameters(args,learn_hist=setting[0],learn_edge_kernels=setting[1],
@@ -90,6 +89,9 @@ def main(args,params):
         #Check for base model
         if setting_count == (len(settings) - 1):
             Network_parameters['histogram'] = False
+        
+        #Name of dataset
+        # Dataset = Network_parameters['Dataset']
                                          
         #Number of runs and/or splits for dataset
         numRuns = Network_parameters['Splits'][Dataset]
@@ -114,6 +116,13 @@ def main(args,params):
             torch.cuda.manual_seed_all(split)
             print("Initializing Datasets and Dataloaders...")
             
+            # Create training and validation dataloaders
+            #dataloaders_dict = Prepare_DataLoaders(Network_parameters,split,
+            #                                   mean=Network_parameters['mean'][Dataset],
+            #                                   std=Network_parameters['std'][Dataset])
+            
+            #Keep track of the bins and widths as these values are updated each
+            #epoch ##########
             if (Network_parameters['learn_transform'] or Network_parameters['feature'] == 'LBP'):
                 saved_bins = np.zeros((Network_parameters['num_epochs']+1, int(Network_parameters['in_channels']) *int(num_feature_maps)))
                 saved_widths =  np.zeros((Network_parameters['num_epochs']+1,int(Network_parameters['in_channels']) * int(num_feature_maps)))
@@ -135,8 +144,10 @@ def main(args,params):
                                                 normalize_bins=Network_parameters['normalize_bins'],
                                                 LBP_init=Network_parameters['feature_init'],
                                                 learn_base = Network_parameters['learn_transform'], ###
+                                                learn_hist = Network_parameters['learn_hist'],
                                                 normalize_kernel=Network_parameters['normalize_kernel'],
                                                 dilation=Network_parameters['dilation'],
+                                                learn_kernel = Network_parameters['learn_edge_kernels'],
                                                 aggregation_type=Network_parameters['aggregation_type'])
                     
                 #Update linear for dilation
@@ -150,6 +161,8 @@ def main(args,params):
                                               normalize_bins=Network_parameters['normalize_bins'],
                                               EHD_init=Network_parameters['feature_init'],
                                               learn_no_edge=Network_parameters['learn_transform'],
+                                              learn_kernel = Network_parameters['learn_edge_kernels'],
+                                              learn_hist = Network_parameters['learn_hist'],
                                               threshold=Network_parameters['threshold'],
                                               angle_res=Network_parameters['angle_res'],
                                               normalize_kernel=Network_parameters['normalize_kernel'],
@@ -157,10 +170,7 @@ def main(args,params):
                 else:
                     raise RuntimeError('Invalid type for histogram layer')
             else:
-                if Network_parameters['feature'] == 'EHD': 
-                     histogram_layer = None
-                elif Network_parameters['feature'] == 'LBP':
-                    histogram_layer = None
+               histogram_layer = None
             
         
             # model_ft = histogram_layer
@@ -181,8 +191,8 @@ def main(args,params):
             
             #Save initial bin widths and centers
             if Network_parameters['histogram']:
-                saved_bins[0,:] = model_ft.histogram_layer.centers.reshape(-1).detach().cpu().numpy() 
-                saved_widths[0,:] = model_ft.histogram_layer.widths.reshape(-1).detach().cpu().numpy()
+                saved_bins[0,:] = model_ft.neural_feature.histogram_layer.centers.reshape(-1).detach().cpu().numpy() 
+                saved_widths[0,:] = model_ft.neural_feature.histogram_layer.widths.reshape(-1).detach().cpu().numpy()
             else:
                 saved_bins = None
                 saved_widths = None
@@ -190,6 +200,17 @@ def main(args,params):
            
             #Print number of trainable parameters (if not learnable (base model),
             # only show parameters from fully connected layer)
+            
+            #Verify parameter learning settings (Salim, remove from updated code base)
+            setting_params = []
+            for name, param in model_ft.named_parameters():
+                if param.requires_grad:
+                    # print(name)
+                    setting_params.append(name)
+                    
+            settings_params_dict['Setting {}'.format(setting)] = setting_params
+            ###################################################################
+            
             try:
                 num_params = sum(p.numel() for p in model_ft.parameters() if p.requires_grad)
             except:
@@ -218,7 +239,7 @@ def main(args,params):
                     num_params=num_params)
             
             test_dict = test_model(dataloaders_dict['test'],model_ft,device,
-                                   Network_parameters,split)
+                                    Network_parameters,split)
             
             # Save results
             if(Network_parameters['save_results']):
@@ -242,15 +263,16 @@ def main(args,params):
 
         if single_setting:
             break
+    
       
     
 def parse_args():
     parser = argparse.ArgumentParser(description='Run neural handcrafted experiments for dataset')
     parser.add_argument('--save_results', default=True, action=argparse.BooleanOptionalAction,
                         help='Save results of experiments (default: True)')
-    parser.add_argument('--folder', type=str, default='Saved_Models/Oct31_None/', # Default is Saved_Models/
+    parser.add_argument('--folder', type=str, default='Saved_Models/', # Default is Saved_Models/
                         help='Location to save models')
-    parser.add_argument('--feature', type=str, default='EHD', ###
+    parser.add_argument('--feature', type=str, default='EHD', 
                         help='Select feature to evaluate (EHD or LBP)')
     parser.add_argument('--mode', type=str, default='config',
                         help='Mode for experiments: ‘config’, ‘kernel’, dilation')
@@ -278,8 +300,8 @@ def parse_args():
                         help='input batch size for validation (default: 512)')
     parser.add_argument('--test_batch_size', type=int, default=256, # Reduced to accomodate memory
                         help='input batch size for testing (default: 256)')
-    parser.add_argument('--num_epochs', type=int, default=50, # Intentionally slowed from 30
-                        help='Number of epochs to train each model for (default: 30)')
+    parser.add_argument('--num_epochs', type=int, default=50, 
+                        help='Number of epochs to train each model for (default: 50)')
     parser.add_argument('--resize_size', type=int, default=128,
                         help='Resize the image before center crop. (default: 128)')
     parser.add_argument('--center_size', type=int, default=112,
@@ -288,7 +310,7 @@ def parse_args():
                         help='Stride for histogram feature. (default: 1)')
     parser.add_argument('--num_workers', type=int, default=0, ################
                         help='Number of workers for dataloader. (default: 1)')
-    parser.add_argument('--lr', type=float, default=0.01, # Increased to accomodate speed
+    parser.add_argument('--lr', type=float, default=0.001, # Increased to accomodate speed
                         help='learning rate (default: 0.001)')
     parser.add_argument('--use-cuda', default=True, action=argparse.BooleanOptionalAction,
                         help='enables CUDA training')
