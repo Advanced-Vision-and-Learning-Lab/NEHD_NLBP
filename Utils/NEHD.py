@@ -16,8 +16,9 @@ class NEHDLayer(nn.Module):
     def __init__(self,in_channels,window_size=[3,3],aggregation_type = 'GAP',
                  mask_size=3,num_bins=4, stride=1,padding=0,normalize_count=True,normalize_bins = True,
                  count_include_pad=False,ceil_mode=False,EHD_init=True,
-                 learn_no_edge=True,threshold=.9,angle_res=45,normalize_kernel=False,
-                 dilation=1):
+                 learn_no_edge=True,learn_kernel= True,learn_hist=True,threshold=.9,angle_res=45,
+                 normalize_kernel=False,
+                 dilation=1,threshold_func= nn.Sigmoid()):
 
         # inherit nn.module
         super(NEHDLayer, self).__init__()
@@ -41,37 +42,39 @@ class NEHDLayer(nn.Module):
         self.dilation = dilation
         self.aggregation_type = aggregation_type
         self.EHD_init = EHD_init
+        self.learn_kernel = learn_kernel
+        self.threshold_func = threshold_func
+        self.learn_hist = learn_hist
         
         #For each data type, apply two 1x1 convolutions, 1) to learn bin center (bias)
         # and 2) to learn bin width
-       
-        # Image Data, only dimension implemented with sobel
-        #Learn no edge through convolution filter
+        
+        #If no edge transform should be learned
         if self.learn_no_edge:
-            if self.in_channels == 1:
-                self.edge_responses = nn.Conv2d(self.in_channels,self.numBins+1,
-                                                  self.mask_size,groups=self.in_channels,
-                                                  bias=False,dilation=self.dilation)
-
-            else:
-                self.edge_responses = nn.Conv2d(self.in_channels,(self.numBins+1)*self.in_channels,
-                                                  self.mask_size,groups=self.in_channels,
-                                                  bias=False,dilation=self.dilation)
-            bin_number = self.edge_responses.out_channels 
-        #Concatenate binary no edge/edge map
+            
+            self.no_edge_conv = nn.Sequential(nn.Conv2d(self.in_channels*self.numBins,self.in_channels,
+                                              self.mask_size,groups=self.in_channels,
+                                              bias=False,dilation=self.dilation,padding='same'),self.threshold_func)
+            
         else:
-            if self.in_channels == 1: #Gray scale (independently)
-                self.edge_responses = nn.Conv2d(self.in_channels,self.numBins,
-                                                  self.mask_size,groups=self.in_channels,
-                                                  bias=False,dilation=self.dilation)
-                
+            
+            self.no_edge_conv = nn.Sequential(nn.Conv2d(self.in_channels*self.numBins,self.in_channels,
+                                              self.mask_size,groups=self.in_channels,
+                                              bias=False,dilation=self.dilation),self.threshold_func)
+            self.no_edge_conv[0].weight.requires_grad = False
+        
+        if self.in_channels == 1: #Gray scale (independently)
+            self.edge_responses = nn.Conv2d(self.in_channels,self.numBins,
+                                              self.mask_size,groups=self.in_channels,
+                                              bias=False,dilation=self.dilation)
+            
 
-            else: #Multichannel, aggregate
-                self.edge_responses = nn.Conv2d(self.in_channels,self.numBins*self.in_channels,
-                                                  self.mask_size,groups=self.in_channels,
-                                                  bias=False,dilation=self.dilation)
+        else: #Multichannel, aggregate
+            self.edge_responses = nn.Conv2d(self.in_channels,self.numBins*self.in_channels,
+                                              self.mask_size,groups=self.in_channels,
+                                              bias=False,dilation=self.dilation)
                 
-            bin_number = self.edge_responses.out_channels + self.in_channels    
+        bin_number = self.edge_responses.out_channels + self.in_channels    
             
         #Intialize histogram layer for aggregation of edge responses
         self.histogram_layer = HistogramLayer(self.edge_responses.out_channels, self.mask_size, dim=2,
@@ -89,6 +92,13 @@ class NEHDLayer(nn.Module):
         self.histogram_layer.bin_widths_conv = nn.Conv2d(bin_number,
                                          bin_number,1, groups=bin_number,
                                          bias=False)
+        
+        #Change centers and widths of histogram to be shared with NEHD
+        self.histogram_layer.centers =  self.histogram_layer.bin_centers_conv.bias
+        self.histogram_layer.widths = self.histogram_layer.bin_widths_conv.weight 
+        
+        #Change aggregation type for histogram layer
+        self.histogram_layer = self.set_histogram_layer()
           
         #Initialize edge kernels to correct values and intial bins to 0 and widths to 1
         if self.EHD_init:
@@ -99,6 +109,7 @@ class NEHDLayer(nn.Module):
             #Repeat along channel dimension
             masks = masks.repeat(1,self.in_channels,1,1)
             
+            #Hard code for MNIST, change later (maximum value of input image)
             self.bin_init = 1
             self.bin_init = sum(2*self.bin_init*torch.topk(torch.flatten(masks[0,0]),self.mask_size[0])[0])
             masks.requires_grad = True
@@ -108,31 +119,48 @@ class NEHDLayer(nn.Module):
             else:
                 
                 #Generate indices for multichannel (treat each channel independently)
-                if self.learn_no_edge:
-                    indices = np.arange(0,self.in_channels*(self.numBins+1))
-                    indices = indices.reshape(-1,self.numBins+1)[:,1:].flatten() - 1
-                else:
-                    indices = np.arange(0,self.in_channels*(self.numBins))
+                indices = np.arange(0,self.in_channels*(self.numBins))
                 
                 #Split into equal parts to match corresponding kernels
                 indices = np.array_split(indices,self.in_channels)
                 
-               
                 for channel in range(0,self.in_channels):
                     self.edge_responses.weight.data[indices[channel]]= masks[:,channel].unsqueeze(1)
+              
           
             self.histogram_layer.bin_centers_conv.bias.data.fill_(-self.bin_init.clone().detach().requires_grad_(True))
             self.histogram_layer.bin_centers_conv.weight.data.fill_(1)
             self.histogram_layer.bin_centers_conv.weight.requires_grad = False
+            
+            #Started with 1 (for experiments), 3.75 for figure in paper
             self.histogram_layer.bin_widths_conv.weight.data.fill_(1)
      
+        # Set the learning parameters for the kernel
+        if self.learn_kernel:
+            self.edge_responses.weight.requires_grad = True
+        else:
+            self.edge_responses.weight.requires_grad = False
+         
+        # Set the learning parameters for the histogram layer
+        if self.learn_hist:
+            self.histogram_layer.centers.requires_grad = True
+            self.histogram_layer.widths.requires_grad = True
+        else:
+            self.histogram_layer.centers.requires_grad = False
+            self.histogram_layer.widths.requires_grad = False
+            
         #Set values for analysis later
         self.centers = self.histogram_layer.bin_centers_conv.bias
         self.widths = self.histogram_layer.bin_widths_conv.weight
-        self.edge_kernels = self.edge_responses.weight
         
-        #Change aggregation type for histogram layer
-        self.histogram_layer = self.set_histogram_layer()
+        #If learning no edge, compute average mask for no edge orientation and 
+        #concatenate it for visualization later
+        if self.learn_no_edge:
+            avg_threshold_mask = torch.mean(self.no_edge_conv[0].weight,dim=1,keepdim=True)
+            self.edge_kernels = torch.cat((self.edge_responses.weight,avg_threshold_mask),dim=0)
+        else:
+            self.edge_kernels = self.edge_responses.weight
+        
      
     def set_histogram_layer(self):
         #Perform global or local average pooling for feature
@@ -150,9 +178,13 @@ class NEHDLayer(nn.Module):
         #Learn sobel responses
         xx = self.edge_responses(xx)
         
+        #TO DO: remove if statement (call function or CNN layer for no edge)
         if not(self.learn_no_edge):
             xx_no_edge = self.get_no_edge(xx)
-            xx = torch.cat((xx,xx_no_edge),dim=1)
+        else: #learn no edge through convolution
+            xx_no_edge = self.no_edge_conv(xx)
+        
+        xx = torch.cat((xx,xx_no_edge),dim=1)
         
         #Pass through histogram layer (binning)
         xx = self.histogram_layer(xx)
