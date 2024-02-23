@@ -314,7 +314,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Run neural handcrafted experiments for dataset')
     parser.add_argument('--save_results', default=True, action=argparse.BooleanOptionalAction,
                         help='Save results of experiments (default: True)')
-    parser.add_argument('--folder', type=str, default='Saved_Models/Oct31/', # Default is Saved_Models/
+    parser.add_argument('--folder', type=str, default='Saved_Models/', # Default is Saved_Models/
                         help='Location to save models') # Results_Test in the future
     parser.add_argument('--feature', type=str, default='EHD', ###
                         help='Select feature to evaluate (EHD or LBP)')

@@ -47,9 +47,8 @@ def Parameters(args,learn_hist=True,learn_edge_kernels=True,feature_init=True,
     
     #Select dataset. Set to number of desired texture dataset
     data_selection = args.data_selection
-    Dataset_names = {1: 'Fashion_MNIST',
-                     2: 'Derma_MNIST', 3: 'PRMI',
-                     4:'BloodMNIST'} 
+    Dataset_names = {1: 'Fashion_MNIST',2: 'PRMI',
+                     3:'BloodMNIST'} 
     
     #EHD and LBP parameters
     #mask_size - Convolution kernel size for edge responses
