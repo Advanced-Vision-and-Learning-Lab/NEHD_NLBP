@@ -28,7 +28,7 @@ from Utils.Network_functions import initialize_model
 from Prepare_Data import Prepare_DataLoaders
 from Utils.Confusion_mats import plot_confusion_matrix,plot_avg_confusion_matrix
 from Utils.Generate_Learning_Curves import Plot_Learning_Curves
-from Demo_Parameters_batch import Parameters
+from Demo_Parameters import Parameters
 from Utils.Crisp_Histogram_visual import Generate_Histogram_visual
 from Utils.Save_Results import generate_filename
 from Utils.NLBP import NLBPLayer
@@ -206,9 +206,7 @@ def main(args, params):
             if (TSNE_visual):
                 print("Initializing Datasets and Dataloaders...")
                 
-                dataloaders_dict = Prepare_DataLoaders(Results_parameters,split,
-                                                       mean=Results_parameters['mean'][Dataset],
-                                                       std=Results_parameters['std'][Dataset])
+                dataloaders_dict = Prepare_DataLoaders(Results_parameters,split)
                 print('Creating TSNE Visual...')
                 
                 #Remove fully connected layer

@@ -156,7 +156,7 @@ def Parameters(args,learn_hist=True,learn_edge_kernels=True,feature_init=True,
     #value is less than total training images).
     TSNE_visual = True
     Separate_TSNE = False
-    Num_TSNE_images = 10000
+    Num_TSNE_images = 100
     
     #Visualization parameters for figures
     fig_size = 16

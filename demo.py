@@ -31,7 +31,7 @@ from Utils.NEHD import NEHDLayer
 from Utils.Compute_LBP import LocalBinaryLayer
 from Utils.Compute_EHD import EHD_Layer
 from Utils.Save_Results import save_results
-from Demo_Parameters_batch import Parameters
+from Demo_Parameters import Parameters
 from Prepare_Data import Prepare_DataLoaders
 import pdb
 

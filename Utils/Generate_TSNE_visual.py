@@ -14,25 +14,25 @@ from Utils.Compute_FDR import Compute_Fisher_Score
 from sklearn.model_selection import train_test_split
 import pdb
 
-def plot_components(data, proj, images=None, ax=None,
-                    thumb_frac=0.05, cmap='Greys'):
-    ax = ax or plt.gca()
+# def plot_components(data, proj, images=None, ax=None,
+#                     thumb_frac=0.05, cmap='Greys'):
+#     ax = ax or plt.gca()
     
-    ax.plot(proj[:, 0], proj[:, 1], '.k')
+#     ax.plot(proj[:, 0], proj[:, 1], '.k')
     
-    if images is not None:
-        min_dist_2 = (thumb_frac * max(proj.max(0) - proj.min(0))) ** 2
-        shown_images = np.array([2 * proj.max(0)])
-        for i in range(data.shape[0]):
-            dist = np.sum((proj[i] - shown_images) ** 2, 1)
-            if np.min(dist) < min_dist_2:
-                # don't show points that are too close
-                continue
-            shown_images = np.vstack([shown_images, proj[i]])
-            imagebox = offsetbox.AnnotationBbox(
-                offsetbox.OffsetImage(images[i],zoom=.2, cmap=cmap),
-                                      proj[i])
-            ax.add_artist(imagebox)
+#     if images is not None:
+#         min_dist_2 = (thumb_frac * max(proj.max(0) - proj.min(0))) ** 2
+#         shown_images = np.array([2 * proj.max(0)])
+#         for i in range(data.shape[0]):
+#             dist = np.sum((proj[i] - shown_images) ** 2, 1)
+#             if np.min(dist) < min_dist_2:
+#                 # don't show points that are too close
+#                 continue
+#             shown_images = np.vstack([shown_images, proj[i]])
+#             imagebox = offsetbox.AnnotationBbox(
+#                 offsetbox.OffsetImage(images[i],zoom=.2, cmap=cmap),
+#                                       proj[i])
+#             ax.add_artist(imagebox)
             
 def Generate_TSNE_visual(dataloaders_dict,model,sub_dir,device,class_names,
                          Num_TSNE_images=None):
@@ -109,15 +109,15 @@ def Generate_TSNE_visual(dataloaders_dict,model,sub_dir,device,class_names,
             fig6.savefig((sub_dir + 'TSNE_Visual_{}_Data.png'.format(phase.capitalize())), dpi=fig6.dpi)
             plt.close()
             
-            #Plot tSNE with images
-            fig9, ax9 = plt.subplots()
-            plot_components(features_extracted[temp_indices],features_embedded,thumb_frac=0.1,
-                            images=saved_imgs[temp_indices],cmap='Greys')
-            plt.grid('off')
-            plt.axis('off')
+            # #Plot tSNE with images
+            # fig9, ax9 = plt.subplots()
+            # plot_components(features_extracted[temp_indices],features_embedded,thumb_frac=0.1,
+            #                 images=saved_imgs[temp_indices],cmap='Greys')
+            # plt.grid('off')
+            # plt.axis('off')
             
-            fig9.savefig((sub_dir + 'TSNE_Visual_{}_Data_Images.png'.format(phase.capitalize())),dpi=fig9.dpi)
-            plt.close()
+            # fig9.savefig((sub_dir + 'TSNE_Visual_{}_Data_Images.png'.format(phase.capitalize())),dpi=fig9.dpi)
+            # plt.close()
     
         # del dataloaders_dict,features_embedded
         torch.cuda.empty_cache()
