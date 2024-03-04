@@ -71,28 +71,28 @@ https://github.com/Advanced-Vision-and-Learning-Lab/NEHD_NLBP
 	├── Demo_Parameters.py // Parameters file for demo.
 	├── Prepare_Data.py  // Load data for demo file.
 	├── View_Results.py // Run this after demo to view saved results.
-  ├── req.txt // Contains the requirements 
-  ├── Datasets
-		├── PRMIDataset.py // Returns Index for PRMI dataset
-		├── Pytorch_Datasets.py // Return Index for Pytorch datasets
+  	├── req.txt // Contains the requirements 
+        ├── Datasets
+                    ├── PRMIDataset.py // Returns Index for PRMI dataset
+                    ├── Pytorch_Datasets.py // Return Index for Pytorch datasets
 	└── Utils  //utility functions
-		├── Base_Model.py // Returns the linear model passed through
-    ├── Compute_EHD.py // Returns the EHD algorithm layer
-    ├── Compute_FDR.py // Returns the FDR score
-    ├── Compute_LBP.py // Returns the LBP algorithm layer
-    ├── Compute_Sizes.py // Returns the output size
-    ├── Confusion_mats.py // Returns the confusion matrices visual
-    ├── Crisp_Histogram_visuals.py // Returns Histogram visuals
-    ├── Generate_Learning_Curves.py // Returns the learning curves both loss and accuracy
-    ├── Generate_Plots.py // Returns the plots used in reconstruction /* verify */
-    ├── Generate_TSNE_visual.py // Returns the TSNE plots for test data
-    ├── Histogram_Model.py // Returns the Histogram Network
-    ├── NEHD.py // Returns the NEHD layer implementation
-    ├── NLBP.py // Returns the NLBP layer implementation
-    ├── Network_functions.py // Contains the functions called in main
-    ├── RBFHistogramPooling.py // Returns the Histogram Layer
-    ├── Save_Results.py // Saves the results into the directory
-    ├── pytorchtools.py // Contains early stopping functionality
+		    ├── Base_Model.py // Returns the linear model passed through
+		    ├── Compute_EHD.py // Returns the EHD algorithm layer
+		    ├── Compute_FDR.py // Returns the FDR score
+		    ├── Compute_LBP.py // Returns the LBP algorithm layer
+		    ├── Compute_Sizes.py // Returns the output size
+		    ├── Confusion_mats.py // Returns the confusion matrices visual
+		    ├── Crisp_Histogram_visuals.py // Returns Histogram visuals
+		    ├── Generate_Learning_Curves.py // Returns the learning curves both loss and accuracy
+		    ├── Generate_Plots.py // Returns the plots used in reconstruction /* verify */
+		    ├── Generate_TSNE_visual.py // Returns the TSNE plots for test data
+		    ├── Histogram_Model.py // Returns the Histogram Network
+		    ├── NEHD.py // Returns the NEHD layer implementation
+		    ├── NLBP.py // Returns the NLBP layer implementation
+		    ├── Network_functions.py // Contains the functions called in main
+		    ├── RBFHistogramPooling.py // Returns the Histogram Layer
+		    ├── Save_Results.py // Saves the results into the directory
+		    ├── pytorchtools.py // Contains early stopping functionality
 ```
 
 ## License
