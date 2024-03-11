@@ -83,9 +83,8 @@ https://github.com/Advanced-Vision-and-Learning-Lab/NEHD_NLBP
 		├── Compute_LBP.py // Returns the LBP algorithm layer
 		├── Compute_Sizes.py // Returns the output size
 		├── Confusion_mats.py // Returns the confusion matrices visual
-		├── Crisp_Histogram_visuals.py // Returns Histogram visuals
 		├── Generate_Learning_Curves.py // Returns the learning curves both loss and accuracy
-		├── Generate_Plots.py // Returns the plots used in reconstruction /* verify */
+		├── Generate_Plots.py // Returns the plots of the Histograms and Kernels learned
 		├── Generate_TSNE_visual.py // Returns the TSNE plots for test data
 		├── Histogram_Model.py // Returns the Histogram Network
 		├── NEHD.py // Returns the NEHD layer implementation
