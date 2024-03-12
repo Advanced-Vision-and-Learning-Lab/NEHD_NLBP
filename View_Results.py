@@ -324,7 +324,7 @@ def parse_args():
                         help='Flag to use histogram model or baseline global average pooling (GAP), --no-histogram (GAP) or --histogram')
     parser.add_argument('--data_selection', type=int, default=1, # Data Config
                         help='Dataset selection: See Demo_Parameters for full list of datasets')
-    parser.add_argument('-numBins', type=int, default=256, # Data Config
+    parser.add_argument('--numBins', type=int, default=256, # Data Config
                         help='Number of bins for histogram layer. Recommended values are 4, 8 and 16. (default: 16)')
     parser.add_argument('-angle_res', type=int, default=45,
                         help='Number of angle resolutions (controls number of bins). Recommended value is 45 for 8 edge orientations (default: 45)')
