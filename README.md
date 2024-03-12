@@ -7,17 +7,17 @@ _Joshua Peeples, Salim Al Kharsa, Luke Saleh, and Alina Zare_
 
 Note: If this code is used, cite it: Joshua Peeples, Salim Al Kharsa, Luke Saleh, and Alina Zare. 
 (2024, Month Day). Advanced Vision and Learning Lab/Neural Handcrafted Features: Initial Release (Version v1.0). 
-[`Zendo`](https://zenodo.org/record/8023959). https://doi.org/10.5281/zenodo.8023959
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8023959.svg)](https://doi.org/10.5281/zenodo.8023959)
+[`Zendo`](10.5281/zenodo.10810460). https://doi.org/10.5281/zenodo.10810460
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10810460.svg)](https://doi.org/10.5281/zenodo.10810460)
 
 [`IEEE Xplore (IGARRS)`](https://ieeexplore.ieee.org/document/10281981)
 
 [`arXiv`](https://arxiv.org/abs/2306.04037)
 
-[`BibTeX`](https://github.com/Peeples-Lab/XAI_Analysis#citing-quantitative-analysis-of-primary-attribution-explainable-artificial-intelligence-methods-for-remote-sensing-image-classification)
+[`BibTeX`](https://github.com/Advanced-Vision-and-Learning-Lab/NEHD_NLBP.git)
 
 
-In this repository, we provide the paper and code for the " Histogram Layers for Neural Handcrafted Features"
+In this repository, we provide the paper and code for the "Histogram Layers for Neural Handcrafted Features"
 
 ## Installation Prerequisites
 
