@@ -99,7 +99,7 @@ https://github.com/Advanced-Vision-and-Learning-Lab/NEHD_NLBP
 This source code is licensed under the license found in the [`LICENSE`](LICENSE) 
 file in the root directory of this source tree.
 
-This product is Copyright (c) 2024 J. Peeples, Salim Al Kharsa, Luke Saleh, and Alina Zare. All rights reserved.
+This product is Copyright (c) 2024 J. Peeples, and Salim Al Kharsa, and Luke Saleh, and Alina Zare. All rights reserved.
 
 ## <a name="CitingHistogramFeatures"></a>Citing Histogram Layers for Neural Handcrafted Features
 
@@ -108,7 +108,7 @@ reference using the following entry.
 
 **Plain Text:**
 
-J.Peeples S.Al Kharsa L.Saleh and A.Zare, "Quantitative Analysis of Primary Attribution Explainable Artificial Intelligence Methods for Remote Sensing Image Classification,"  in 2023 IEEE International Geoscience and Remote Sensing Symposium IGARSS, pp. 950-953. IEEE, 2023
+J.Peeples and S.Al Kharsa and L.Saleh and A.Zare, "Histogram Layers for Neural Handcrafted Features,"  in 2024 IEEE TBD, pp. TBD. IEEE, 2024
 
 **BibTex:**
 ```
