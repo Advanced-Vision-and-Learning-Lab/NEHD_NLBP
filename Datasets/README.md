@@ -6,12 +6,12 @@ to ensure the code works. If any of these datasets are used,
 please cite the appropiate sources (papers, repositories, etc.) as mentioned
 on the webpages and provided here.
 
-## FashionMNIST [[`BibTeX`](#CitingPRMI)]
+## FashionMNIST [[`BibTeX`](#CitingFashionMNIST)]
 
 
-FashionMNIST is downloaded to the Datasets folder in the root directory.
+The FashionMNIST dataset is automatically downloaded to the "Datasets" folder within the root directory upon selecting the FashionMNIST dataset.
 
-## <a name="Citing FashionMNIST"></a>Citing PRMI
+## <a name="CitingFashionMNIST"></a>Citing FashionMNIST
 
 If you use the FashionMNIST dataset, please cite the following reference using the following entry.
 
@@ -56,7 +56,7 @@ and follow these instructions:
         ├── masks_pixel_gt   // Pixel label ground truth masks.
 /* question in the paper we used 4 of the classes should I add an instruction saying to make that edit? */ 
 ```
-## <a name="Citing PRMI"></a>Citing PRMI
+## <a name="CitingPRMI"></a>Citing PRMI
 
 If you use the PRMI dataset, please cite the following reference using the following entry.
 
@@ -78,5 +78,40 @@ February, 2022.
       eprint={2201.08002},
       archivePrefix={arXiv},
       primaryClass={cs.CV}
+}
+```
+
+## BloodMNIST [[`BibTeX`](#CitingBloodMNIST)]
+
+
+The BloodMNIST dataset is automatically downloaded to the "Datasets" folder within the root directory upon selecting the BloodMNIST dataset.
+
+## <a name="CitingBloodMNIST"></a>Citing BloodMNIST
+
+If you use the BloodMNIST dataset, please cite the following reference using the following entry.
+
+**Plain Text:**
+
+J. Yang, R. Shi, and B. Ni, “Medmnist classification decathlon: A lightweight automl benchmark for medical image analysis,” in IEEE 18th International Symposium on Biomedical Imaging (ISBI), 2021, pp. 191–195.
+
+Acevedo, A., Merino, A., Alférez, S., Molina, Á., Boldú, L., & Rodellar, J. (2020). A dataset of microscopic peripheral blood cell images for development of automatic recognition systems. Data in Brief, 30, 105474.
+
+**BibTex:**
+```
+@inproceedings{medmnistv1,
+    title={MedMNIST Classification Decathlon: A Lightweight AutoML Benchmark for Medical Image Analysis},
+    author={Yang, Jiancheng and Shi, Rui and Ni, Bingbing},
+    booktitle={IEEE 18th International Symposium on Biomedical Imaging (ISBI)},
+    pages={191--195},
+    year={2021}
+}
+
+@article{bloodmnist,
+    title = {A dataset of microscopic peripheral blood cell images for development of automatic recognition systems},
+    author = {Andrea Acevedo and Anna Merino and Santiago Alférez and Ángel Molina and Laura Boldú and José Rodellar},
+    journal = {Data in Brief},
+    volume = {30},
+    pages = {105474},
+    year = {2020},
 }
 ```
