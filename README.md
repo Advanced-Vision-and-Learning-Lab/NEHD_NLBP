@@ -3,8 +3,7 @@
 
 _Joshua Peeples, Salim Al Kharsa, Luke Saleh, and Alina Zare_
 
-![Fig1_Workflow](https://github.com/Advanced-Vision-and-Learning-Lab/NEHD_NLBP/blob/main/Images/NEHD.png)
-![Fig2_Workflow](https://github.com/Advanced-Vision-and-Learning-Lab/NEHD_NLBP/blob/main/Images/NLBP.png)
+![Fig1_Workflow](https://github.com/Advanced-Vision-and-Learning-Lab/NEHD_NLBP/blob/main/Images/Implementation_White_Background.png)
 
 Note: If this code is used, cite it: Joshua Peeples, Salim Al Kharsa, Luke Saleh, and Alina Zare. 
 (2024, Month Day). Advanced Vision and Learning Lab/Neural Handcrafted Features: Initial Release (Version v1.0). 
