@@ -6,6 +6,32 @@ to ensure the code works. If any of these datasets are used,
 please cite the appropiate sources (papers, repositories, etc.) as mentioned
 on the webpages and provided here.
 
+## FashionMNIST [[`BibTeX`](#CitingPRMI)]
+
+
+FashionMNIST is downloaded to the Datasets folder in the root directory.
+
+## <a name="Citing FashionMNIST"></a>Citing PRMI
+
+If you use the FashionMNIST dataset, please cite the following reference using the following entry.
+
+**Plain Text:**
+
+Xiao, H., Rasul, K., & Vollgraf, R. (2017). Fashion-MNIST: a Novel Image Dataset for Benchmarking Machine Learning Algorithms. Retrieved August 28, 2017, from arXiv preprint server (cs.LG/1708.07747).
+
+**BibTex:**
+```
+@online{xiao2017/online,
+  author       = {Han Xiao and Kashif Rasul and Roland Vollgraf},
+  title        = {Fashion-MNIST: a Novel Image Dataset for Benchmarking Machine Learning Algorithms},
+  date         = {2017-08-28},
+  year         = {2017},
+  eprintclass  = {cs.LG},
+  eprinttype   = {arXiv},
+  eprint       = {cs.LG/1708.07747},
+}
+```
+
 ##  Plant Root Minirhizotron Imagery (PRMI) [[`BibTeX`](#CitingPRMI)]
 
 Please download the [`PRMI dataset`](https://gatorsense.github.io/PRMI/) 
@@ -30,7 +56,7 @@ and follow these instructions:
         ├── masks_pixel_gt   // Pixel label ground truth masks.
 /* question in the paper we used 4 of the classes should I add an instruction saying to make that edit? */ 
 ```
-## <a name="CitingPRMI"></a>Citing PRMI
+## <a name="Citing PRMI"></a>Citing PRMI
 
 If you use the PRMI dataset, please cite the following reference using the following entry.
 
