@@ -54,7 +54,6 @@ and follow these instructions:
         ├── images   // Input images.
         ├── labels_image_gt   // Metadata for each image.
         ├── masks_pixel_gt   // Pixel label ground truth masks.
-/* question in the paper we used 4 of the classes should I add an instruction saying to make that edit? */ 
 ```
 ## <a name="CitingPRMI"></a>Citing PRMI
 
