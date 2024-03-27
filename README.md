@@ -10,9 +10,7 @@ Note: If this code is used, cite it: Joshua Peeples, Salim Al Kharsa, Luke Saleh
 [`Zendo`](10.5281/zenodo.10810460). https://doi.org/10.5281/zenodo.10810460
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10810460.svg)](https://doi.org/10.5281/zenodo.10810460)
 
-[`IEEE Xplore (IGARRS)`](https://ieeexplore.ieee.org/document/10281981)
-
-[`arXiv`](https://arxiv.org/abs/2306.04037)
+[`arXiv`](https://arxiv.org/abs/2403.17176)
 
 [`BibTeX`](https://github.com/Advanced-Vision-and-Learning-Lab/NEHD_NLBP.git)
 
