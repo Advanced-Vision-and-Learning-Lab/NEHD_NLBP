@@ -1,5 +1,5 @@
-# Histogram Layers for Neural Handcrafted Features:
-**Histogram Layers for Neural Handcrafted Features**
+# Histogram Layers for Neural Engineered Features:
+**Histogram Layers for Neural Engineered Features**
 
 _Joshua Peeples, Salim Al Kharsa, Luke Saleh, and Alina Zare_
 
@@ -99,14 +99,14 @@ file in the root directory of this source tree.
 
 This product is Copyright (c) 2024 J. Peeples, and Salim Al Kharsa, and Luke Saleh, and Alina Zare. All rights reserved.
 
-## <a name="CitingHistogramFeatures"></a>Citing Histogram Layers for Neural Handcrafted Features
+## <a name="CitingHistogramFeatures"></a>Citing Histogram Layers for Neural Engineered Features
 
 If you use the code, please cite the following 
 reference using the following entry.
 
 **Plain Text:**
 
-J.Peeples and S.Al Kharsa and L.Saleh and A.Zare, "Histogram Layers for Neural Handcrafted Features,"  in 2024 IEEE TBD, pp. TBD. IEEE, 2024
+J.Peeples and S.Al Kharsa and L.Saleh and A.Zare, "Histogram Layers for Neural Engineered Features,"  in 2024 IEEE TBD, pp. TBD. IEEE, 2024
 
 **BibTex:**
 ```
