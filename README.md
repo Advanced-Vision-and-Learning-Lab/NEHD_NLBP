@@ -6,7 +6,7 @@ _Joshua Peeples, Salim Al Kharsa, Luke Saleh, and Alina Zare_
 ![Fig1_Workflow](https://github.com/Advanced-Vision-and-Learning-Lab/NEHD_NLBP/blob/main/Images/Implementation_White_Background.png)
 
 Note: If this code is used, cite it: Joshua Peeples, Salim Al Kharsa, Luke Saleh, and Alina Zare. 
-(2024, Month Day). Advanced Vision and Learning Lab/Neural Handcrafted Features: Initial Release (Version v1.0). 
+(2024, Month Day). Advanced Vision and Learning Lab/Neural Engineered Features: Initial Release (Version v1.0). 
 [`Zendo`](10.5281/zenodo.10810460). https://doi.org/10.5281/zenodo.10810460
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10810460.svg)](https://doi.org/10.5281/zenodo.10810460)
 
@@ -15,7 +15,7 @@ Note: If this code is used, cite it: Joshua Peeples, Salim Al Kharsa, Luke Saleh
 [`BibTeX`](https://github.com/Advanced-Vision-and-Learning-Lab/NEHD_NLBP.git)
 
 
-In this repository, we provide the paper and code for the "Histogram Layers for Neural Handcrafted Features"
+In this repository, we provide the paper and code for the "Histogram Layers for Neural Engineered Features"
 
 ## Installation Prerequisites
 
@@ -110,8 +110,8 @@ J.Peeples and S.Al Kharsa and L.Saleh and A.Zare, "Histogram Layers for Neural E
 
 **BibTex:**
 ```
-@inproceedings{peeples2024handcrafted,
-  title={Histogram Layers for Neural Handcrafted Features},
+@inproceedings{peeples2024engineered,
+  title={Histogram Layers for Neural Engineered Features},
   author={Peeples, Joshua Al Kharsa, Salim Saleh, Luke and Zare, Alina.},
   booktitle={TBD},
   pages={TBD},
