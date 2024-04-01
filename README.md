@@ -6,7 +6,7 @@ _Joshua Peeples, Salim Al Kharsa, Luke Saleh, and Alina Zare_
 ![Fig1_Workflow](https://github.com/Advanced-Vision-and-Learning-Lab/NEHD_NLBP/blob/main/Images/Implementation_White_Background.png)
 
 Note: If this code is used, cite it: Joshua Peeples, Salim Al Kharsa, Luke Saleh, and Alina Zare. 
-(2024, Month Day). Advanced Vision and Learning Lab/Neural Engineered Features: Initial Release (Version v1.0). 
+(2024, March 25). Advanced Vision and Learning Lab/Neural Engineered Features: Initial Release (Version v1.0). 
 [`Zendo`](10.5281/zenodo.10810460). https://doi.org/10.5281/zenodo.10810460
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10810460.svg)](https://doi.org/10.5281/zenodo.10810460)
 
@@ -106,17 +106,15 @@ reference using the following entry.
 
 **Plain Text:**
 
-J.Peeples and S.Al Kharsa and L.Saleh and A.Zare, "Histogram Layers for Neural Engineered Features,"  in 2024 IEEE TBD, pp. TBD. IEEE, 2024
+J.Peeples and S.Al Kharsa and L.Saleh and A.Zare, "Histogram Layers for Neural Engineered Features,"  in Review.
 
 **BibTex:**
 ```
-@inproceedings{peeples2024engineered,
+@article{peeples2024histogram,
   title={Histogram Layers for Neural Engineered Features},
-  author={Peeples, Joshua Al Kharsa, Salim Saleh, Luke and Zare, Alina.},
-  booktitle={TBD},
-  pages={TBD},
-  year={2024},
-  organization={IEEE}
+  author={Peeples, Joshua and Kharsa, Salim Al and Saleh, Luke and Zare, Alina},
+  journal={arXiv preprint arXiv:2403.17176},
+  year={2024}
 }
 
 ```
