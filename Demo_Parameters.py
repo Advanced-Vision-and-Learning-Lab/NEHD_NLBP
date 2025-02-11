@@ -65,6 +65,8 @@ def Parameters(args,learn_hist=True,learn_edge_kernels=True,feature_init=True,
     mask_size = mask_size
     window_size = [5,5]
     angle_res = args.angle_res
+    if 'EHD' in feature:
+      angle_res = int(360/(mask_size[0]**2-1))
     normalize_count = True
     normalize_kernel = True #Need to be normalized for histogram layer (maybe b/c of hist initialization)
     threshold =  1/int(360/angle_res) #10e-3 #1/int(360/angle_res) #.9
