@@ -22,7 +22,7 @@ def generate_filename(Network_parameters,split):
             transform = 'Thres_No_Edge'
     else:
         if Network_parameters['learn_transform']:
-            transform = 'Learn_Base'
+            transform = 'Learn'
         else:
             transform = 'Fixed_Base'
         
