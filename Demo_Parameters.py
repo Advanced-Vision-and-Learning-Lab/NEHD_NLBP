@@ -62,8 +62,8 @@ def Parameters(args,learn_hist=True,learn_edge_kernels=True,feature_init=True,
     #R - radius of neighborhood for LBP
     #P - number of neighbors to consider for LBP
     #feature_init: Set to True if feature should be initialized to original handcrafted feature
-    mask_size = mask_size
-    window_size = [5,5]
+    mask_size = args.kernel_size
+    window_size = args.window_size
     angle_res = args.angle_res
     normalize_count = True
     normalize_kernel = True #Need to be normalized for histogram layer (maybe b/c of hist initialization)
@@ -71,7 +71,7 @@ def Parameters(args,learn_hist=True,learn_edge_kernels=True,feature_init=True,
     R = args.R
     P = args.P
     stride = args.stride
-    dilation = dilation
+    dilation = args.dilation
     feature_init = feature_init
     learn_transform = learn_transform
     

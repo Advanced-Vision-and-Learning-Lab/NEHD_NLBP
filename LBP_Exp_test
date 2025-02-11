@@ -1,0 +1,8 @@
+/var/spool/slurmd/job12574589/slurm_script: line 20: /scratch/user/k1411130/NEHD_NLBP: Is a directory
+/var/spool/slurmd/job12574590/slurm_script: line 20: /scratch/user/k1411130/NEHD_NLBP: Is a directory
+/scratch/user/k1411130/NEHD_NLBP/venv/lib/python3.11/site-packages/medmnist/info.py:17: UserWarning: Failed to setup default root.
+  warnings.warn("Failed to setup default root.")
+/scratch/user/k1411130/NEHD_NLBP/venv/lib/python3.11/site-packages/medmnist/info.py:17: UserWarning: Failed to setup default root.
+  warnings.warn("Failed to setup default root.")
+slurmstepd: error: *** JOB 12574590 ON g069 CANCELLED AT 2025-02-10T23:56:08 ***
+slurmstepd: error: *** JOB 12574589 ON g063 CANCELLED AT 2025-02-11T12:53:17 DUE TO TIME LIMIT ***

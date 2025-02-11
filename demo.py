@@ -64,10 +64,11 @@ def main(args,params):
     # Create training and validation dataloaders
     dataloaders_dict = Prepare_DataLoaders(data_parameters)
 
-    
+    setting_n = 0 if args.feature == 'EHD' else 2
+
 
     settings_params_dict = {}
-    for setting in settings[setting_count:]: 
+    for setting in [settings[setting_n]]: 
 
         #Set initial parameters
         if mode == 'config':
@@ -100,9 +101,9 @@ def main(args,params):
         num_feature_maps = Network_parameters['out_channels']
         
         # Detect if we have a GPU available
-        if torch.cuda.is_available():
-            device = torch.device("cuda")
-        elif torch.backends.mps.is_available():
+        #if torch.cuda.is_available():
+        #    device = torch.device("cuda")
+        if torch.backends.mps.is_available():
             device = torch.device("mps")
         else:
             device = torch.device("cpu")
@@ -180,7 +181,7 @@ def main(args,params):
                                         in_channels=Network_parameters['in_channels'],
                                         histogram_layer=histogram_layer, fusion_method=Network_parameters['fusion_method'])
             
-            if Network_parameters['Parallelize_model']:
+            if Network_parameters['Parallelize_model'] and False:
                 if torch.cuda.device_count() > 1:
                   print("Using", torch.cuda.device_count(), "GPUs!")
                   # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
@@ -310,7 +311,7 @@ def parse_args():
                         help='Stride for histogram feature. (default: 1)')
     parser.add_argument('--num_workers', type=int, default=0, ################
                         help='Number of workers for dataloader. (default: 1)')
-    parser.add_argument('--lr', type=float, default=0.001, # Increased to accomodate speed
+    parser.add_argument('--lr', type=float, default=0.001, 
                         help='learning rate (default: 0.001)')
     parser.add_argument('--use-cuda', default=True, action=argparse.BooleanOptionalAction,
                         help='enables CUDA training')
@@ -320,8 +321,14 @@ def parse_args():
                         help='Setting min is 0 and max is 16')
     parser.add_argument('--fusion_method', type=str, default=None,
                         help='Fusion method for n>1 channels (default: None); Options: None, grayscale, conv')
-    parser.add_argument('--single_setting', default=False, action=argparse.BooleanOptionalAction,
+    parser.add_argument('--single_setting', default=True, action=argparse.BooleanOptionalAction,
                         help='Run a single setting')
+    parser.add_argument('--kernel_size', nargs='+', type=int, default=[3, 3],
+                        help='Mask size controls structural hyper param')
+    parser.add_argument('--window_size', nargs='+', type=int, default=[5, 5],
+                        help='Controls the aggregation kernel hyper param')
+    parser.add_argument('--dilation', default=1, type=int,
+                        help='control lbp structural')
     args = parser.parse_args()
     return args
 
@@ -334,5 +341,8 @@ if __name__ == "__main__":
     else:
         device = torch.device("cpu")
     print('Using device: {}'.format(device))
-    params = Parameters(args)
+    
+    args.kernel_size = list(args.kernel_size)
+    args.window_size = list(args.window_size)
+    params = Parameters(args, mask_size=args.kernel_size)
     main(args,params)
