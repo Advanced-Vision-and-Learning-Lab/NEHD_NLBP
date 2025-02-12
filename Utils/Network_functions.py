@@ -36,6 +36,7 @@ from .pytorchtools import EarlyStopping
 import pdb
 
 from Utils.DSAnet import NMNet
+from Utils.MSDCNN import MSDCNN
 
 plt.ioff()
 
@@ -339,9 +340,11 @@ def initialize_model(parameters,dataloaders_dict,device,num_classes, in_channels
                                     reconstruction=reconstruction, 
                                     preprocess_layer=preprocess_layer)
     
-
     elif parameters['feature'] == 'DSA':
         model_ft = NMNet(num_channels=in_channels, img_size=parameters["center_size"], num_classes=num_classes)
+        
+    elif parameters['feature'] == 'MSDCNN':
+        model_ft = MSDCNN(num_channels=in_channels, img_size=dataloaders_dict['img_size'], num_classes=num_classes)
     # Baseline model
     else:
         if parameters['feature'] == 'EHD': 

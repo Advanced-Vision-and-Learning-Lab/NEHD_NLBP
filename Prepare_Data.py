@@ -133,6 +133,7 @@ def Prepare_DataLoaders(Network_parameters, split=None,
         train_dataset.dataset.transform = transform
         validation_dataset.dataset.transform = transform
         test_dataset.transform = transform
+        Network_parameters['center_size'] = test_dataset[0][0].shape[-1]
 
     elif Dataset == 'PRMI':
         print("Implementing PRMI")
@@ -253,6 +254,9 @@ def Prepare_DataLoaders(Network_parameters, split=None,
                                                            batch_size=Network_parameters['batch_size'][x],
                                                            shuffle=False, 
                                                            num_workers=Network_parameters['num_workers'],
-                                                           pin_memory=Network_parameters['pin_memory']) for x in ['train', 'val','test']}            
+                                                           pin_memory=Network_parameters['pin_memory']) for x in ['train', 'val','test']}  
+
+        #Add image size for FashionMNIST
+        dataloaders_dict['img_size'] =  Network_parameters['center_size']         
     
     return dataloaders_dict
