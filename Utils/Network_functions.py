@@ -35,6 +35,8 @@ from Utils.Generate_Plots import *
 from .pytorchtools import EarlyStopping
 import pdb
 
+from DSAnet import NMNet
+
 plt.ioff()
 
 def train_model(model, dataloaders, criterion, optimizer, device,parameters, 
@@ -331,11 +333,15 @@ def initialize_model(parameters,dataloaders_dict,device,num_classes, in_channels
     num_ftrs = get_feat_size(parameters, dataloaders_dict, preprocess_layer= preprocess_layer,
                              histogram_layer=histogram_layer)
 
-    if histogram_layer is not None:
+    if histogram_layer is not None and parameters["feature"] in ["EHD", "LBP"]:
 
         model_ft = HistogramNetwork(histogram_layer,num_ftrs,num_classes,
                                     reconstruction=reconstruction, 
                                     preprocess_layer=preprocess_layer)
+    
+
+    elif parameters['feature'] == 'DSA':
+	model_ft = NMNet(num_channels=in_channels, img_size=parameters["center_size"], num_classes=num_classes)
     # Baseline model
     else:
         if parameters['feature'] == 'EHD': 

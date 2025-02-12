@@ -15,17 +15,26 @@ import torch
 
 def generate_filename(Network_parameters,split):
     
+    if Network_parameters['feature'] in ['DSA']:
+	filename = f"{Network_parameters['folder']}/{Network_parameters['feature']}/{Network_parameters['Dataset']}/Run_{str(split + 1)}"
+	if not os.path.exists(filename):
+            try:
+            	os.makedirs(filename)
+            except:
+            	pass
+        return filename
+
     if Network_parameters['feature'] == 'EHD':
         if Network_parameters['learn_transform']:
             transform = 'Conv'
         else:
             transform = 'Thresh'
-    else:
+    elif Network_parameters['feature'] == 'LBP':
         if Network_parameters['learn_transform']:
             transform = 'Learn'
         else:
             transform = 'Fixed'
-        
+	    
         
     if(Network_parameters['histogram']):
         if(Network_parameters['feature_init']):
