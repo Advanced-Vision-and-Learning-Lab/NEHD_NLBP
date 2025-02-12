@@ -1,0 +1,93 @@
+/var/spool/slurmd/job12584829/slurm_script: line 20: /scratch/user/k1411130/NEHD_NLBP: Is a directory
+/scratch/user/k1411130/NEHD_NLBP/venv/lib/python3.11/site-packages/medmnist/info.py:17: UserWarning: Failed to setup default root.
+  warnings.warn("Failed to setup default root.")
+Using device: cuda
+Starting Batch Experiments...
+Implementing BloodMNIST as color
+Traceback (most recent call last):
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/urllib/request.py", line 1348, in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/http/client.py", line 1286, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/http/client.py", line 1332, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/http/client.py", line 1281, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/http/client.py", line 1041, in _send_output
+    self.send(msg)
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/http/client.py", line 979, in send
+    self.connect()
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/http/client.py", line 1451, in connect
+    super().connect()
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/http/client.py", line 945, in connect
+    self.sock = self._create_connection(
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/socket.py", line 851, in create_connection
+    raise exceptions[0]
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/socket.py", line 836, in create_connection
+    sock.connect(sa)
+OSError: [Errno 101] Network is unreachable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/scratch/user/k1411130/NEHD_NLBP/Datasets/Pytorch_Datasets.py", line 142, in download
+    download_url(url=self.info["url"],
+  File "/scratch/user/k1411130/NEHD_NLBP/venv/lib/python3.11/site-packages/torchvision/datasets/utils.py", line 134, in download_url
+    url = _get_redirect_url(url, max_hops=max_redirect_hops)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/user/k1411130/NEHD_NLBP/venv/lib/python3.11/site-packages/torchvision/datasets/utils.py", line 82, in _get_redirect_url
+    with urllib.request.urlopen(urllib.request.Request(url, headers=headers)) as response:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/urllib/request.py", line 216, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/urllib/request.py", line 519, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/urllib/request.py", line 536, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/urllib/request.py", line 1391, in https_open
+    return self.do_open(http.client.HTTPSConnection, req,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/eb/sw/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/urllib/request.py", line 1351, in do_open
+    raise URLError(err)
+urllib.error.URLError: <urlopen error [Errno 101] Network is unreachable>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/scratch/user/k1411130/NEHD_NLBP/demo.py", line 350, in <module>
+    main(args,params)
+  File "/scratch/user/k1411130/NEHD_NLBP/demo.py", line 65, in main
+    dataloaders_dict = Prepare_DataLoaders(data_parameters)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/user/k1411130/NEHD_NLBP/Prepare_Data.py", line 220, in Prepare_DataLoaders
+    train_dataset = BloodMNIST(data_dir, split='train', transform = initial_transform['train'], target_transform=None)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/user/k1411130/NEHD_NLBP/Datasets/Pytorch_Datasets.py", line 80, in __init__
+    self.download()
+  File "/scratch/user/k1411130/NEHD_NLBP/Datasets/Pytorch_Datasets.py", line 147, in download
+    raise RuntimeError('Something went wrong when downloading! ' +
+RuntimeError: Something went wrong when downloading! Go to the homepage to download manually. https://github.com/MedMNIST/MedMNIST
+/scratch/user/k1411130/NEHD_NLBP/venv/lib/python3.11/site-packages/medmnist/info.py:17: UserWarning: Failed to setup default root.
+  warnings.warn("Failed to setup default root.")
+Generating Batch Experiments Results...
+Saved_Models/Classification//DSA/Fashion_MNIST/Run_1
+Done!
+Confusion matrix, without normalization
+**********Run 1 Finished**********
+Saved_Models/Classification//DSA/Fashion_MNIST/Run_2
+Done!
+Confusion matrix, without normalization
+**********Run 2 Finished**********
+Saved_Models/Classification//DSA/Fashion_MNIST/Run_3
+Done!
+Confusion matrix, without normalization
+**********Run 3 Finished**********
+Confusion matrix, without normalization
+Finished setting 1 of 16

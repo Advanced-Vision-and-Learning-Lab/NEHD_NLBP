@@ -39,20 +39,18 @@ def generate_filename(Network_parameters,split):
     if(Network_parameters['histogram']):
         if(Network_parameters['feature_init']):
         
-            filename = '{}/{}/{}/{}/{}_{}_{}/{}_init_{}/Run_{}/'.format(Network_parameters['folder'],
+            filename = '{}/{}/{}/{}_{}_{}/{}_init_{}/Run_{}/'.format(Network_parameters['folder'],
                                          Network_parameters['feature'],
                                          Network_parameters['Dataset'],
-                                         Network_parameters['params_settings'],
                                          Network_parameters['hist_model'],
                                          Network_parameters['fusion_method'],
                                          Network_parameters['aggregation_type'],
                                          Network_parameters['feature'],
                                          transform,str(split + 1))
         else:
-            filename = '{}/{}/{}/{}/{}_{}_{}/Rand_init_{}/Run_{}/'.format(Network_parameters['folder'],
+            filename = '{}/{}/{}/{}_{}_{}/Rand_init_{}/Run_{}/'.format(Network_parameters['folder'],
                                        Network_parameters['feature'],
                                        Network_parameters['Dataset'],
-                                       Network_parameters['params_settings'],
                                        Network_parameters['hist_model'],
                                        Network_parameters['fusion_method'],
                                        Network_parameters['aggregation_type'],

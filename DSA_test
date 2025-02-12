@@ -1,0 +1,23 @@
+/var/spool/slurmd/job12584311/slurm_script: line 20: /scratch/user/k1411130/NEHD_NLBP: Is a directory
+/scratch/user/k1411130/NEHD_NLBP/venv/lib/python3.11/site-packages/medmnist/info.py:17: UserWarning: Failed to setup default root.
+  warnings.warn("Failed to setup default root.")
+Using device: cuda
+Starting Batch Experiments...
+Initializing Datasets and Dataloaders...
+Traceback (most recent call last):
+  File "/scratch/user/k1411130/NEHD_NLBP/demo.py", line 350, in <module>
+    main(args,params)
+  File "/scratch/user/k1411130/NEHD_NLBP/demo.py", line 174, in main
+    raise RuntimeError('Invalid type for histogram layer')
+RuntimeError: Invalid type for histogram layer
+/scratch/user/k1411130/NEHD_NLBP/venv/lib/python3.11/site-packages/medmnist/info.py:17: UserWarning: Failed to setup default root.
+  warnings.warn("Failed to setup default root.")
+Generating Batch Experiments Results...
+Saved_Models/Classification//DSA/Fashion_MNIST/Run_1
+Traceback (most recent call last):
+  File "/scratch/user/k1411130/NEHD_NLBP/View_Results.py", line 388, in <module>
+    main(args,params)
+  File "/scratch/user/k1411130/NEHD_NLBP/View_Results.py", line 136, in main
+    train_pkl_file = open(sub_dir+'train_dict.pkl','rb')
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'Saved_Models/Classification//DSA/Fashion_MNIST/Run_1train_dict.pkl'
