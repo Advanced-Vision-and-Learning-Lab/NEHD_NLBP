@@ -1,11 +1,12 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import pdb
 
 class SpatialAttention(nn.Module):
     def __init__(self, in_channels, kernel_size=3):
         super(SpatialAttention, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels, 1, kernel_size=kernel_size, padding='same', bias=False)
+        self.conv1 = nn.Conv2d(2, 1, kernel_size=kernel_size, padding='same', bias=False)
 
     def forward(self, x):
         avg_pool = torch.mean(x, dim=1, keepdim=True)
@@ -30,7 +31,11 @@ class NMNet(nn.Module):
         self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
 
         self.flatten = nn.Flatten()
-        self.fc1 = nn.Linear(12 * ((img_size // 4) ** 2), 420)
+        
+        #Hard coded for FashionMNIST
+        self.fc1 = nn.Linear(432,420)
+        
+        #self.fc1 = nn.Linear(12 * ((img_size // 4) ** 2), 420)
         self.dropout = nn.Dropout(0.6)
         self.fc2 = nn.Linear(420, 250)
         self.fc3 = nn.Linear(250, num_classes)
@@ -52,7 +57,7 @@ class NMNet(nn.Module):
         x = self.dropout(x)
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
-        return x
+        return x, x
 
 # Example usage:
 # model = NMNet(num_channels=3, img_size=32, num_classes=10)

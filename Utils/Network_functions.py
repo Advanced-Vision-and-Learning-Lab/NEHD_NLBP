@@ -35,7 +35,7 @@ from Utils.Generate_Plots import *
 from .pytorchtools import EarlyStopping
 import pdb
 
-from DSAnet import NMNet
+from Utils.DSAnet import NMNet
 
 plt.ioff()
 
@@ -341,7 +341,7 @@ def initialize_model(parameters,dataloaders_dict,device,num_classes, in_channels
     
 
     elif parameters['feature'] == 'DSA':
-	model_ft = NMNet(num_channels=in_channels, img_size=parameters["center_size"], num_classes=num_classes)
+        model_ft = NMNet(num_channels=in_channels, img_size=parameters["center_size"], num_classes=num_classes)
     # Baseline model
     else:
         if parameters['feature'] == 'EHD': 
