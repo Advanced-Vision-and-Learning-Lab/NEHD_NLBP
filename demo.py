@@ -65,10 +65,11 @@ def main(args,params):
     dataloaders_dict = Prepare_DataLoaders(data_parameters)
 
     
+    setting_n = 0 if args.feature == 'EHD' else 2
+
 
     settings_params_dict = {}
-    for setting in settings[setting_count:]: 
-
+    for setting in [settings[setting_n]]:
         #Set initial parameters
         if mode == 'config':
             Network_parameters = Parameters(args,learn_hist=setting[0],learn_edge_kernels=setting[1],

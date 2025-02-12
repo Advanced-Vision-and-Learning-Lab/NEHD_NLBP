@@ -6,7 +6,7 @@
 #SBATCH --nodes=1                    # How many nodes to request, this should almost always be 1
 #SBATCH --cpus-per-task=1            # How many cpus to request per task, when using with lightning this should be > --num_data_workers hyperparameters
 #SBATCH --mem=16G                    # Request RAM that is per node 8 to 16GB is usually sufficient, this depends on the size of the dataset
-#SBATCH --output=LBP_Exp_test2       # Set the name of the output file, use a unique name for each job
+#SBATCH --output=LBP_Exp_test3       # Set the name of the output file, use a unique name for each job
 #SBATCH --partition=gpu              # Specify partition to submit job to, dont change this
 #SBATCH --gres=gpu:1                 # Specify GPU(s) per node, 2 A100 gpu; Use more than 1 if you are running out of memory due to the GPU
 
