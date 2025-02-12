@@ -17,14 +17,14 @@ def generate_filename(Network_parameters,split):
     
     if Network_parameters['feature'] == 'EHD':
         if Network_parameters['learn_transform']:
-            transform = 'Conv_No_Edge'
+            transform = 'Conv'
         else:
-            transform = 'Thres_No_Edge'
+            transform = 'Thresh'
     else:
         if Network_parameters['learn_transform']:
             transform = 'Learn'
         else:
-            transform = 'Fixed_Base'
+            transform = 'Fixed'
         
         
     if(Network_parameters['histogram']):

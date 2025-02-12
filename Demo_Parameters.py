@@ -215,13 +215,13 @@ def Parameters(args,learn_hist=True,learn_edge_kernels=True,feature_init=True,
         folder = folder + 'Classification/'
         
     if learn_hist and not(learn_edge_kernels): #Only update histogram layer
-        params_settings = 'Learn_Hist'
+        params_settings = 'Hist'
     elif not(learn_hist) and learn_edge_kernels: #Only update spatial kernels
-        params_settings = 'Learn_Kernels'
+        params_settings = 'Kernels'
     elif learn_hist and learn_edge_kernels: #Update all params
-        params_settings = 'Learn_All'
+        params_settings = 'L_All'
     else: #Base feature
-        params_settings = 'Fix_All'
+        params_settings = 'F_All'
 
     
     #Return dictionary of parameters
