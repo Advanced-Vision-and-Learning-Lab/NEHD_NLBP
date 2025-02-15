@@ -341,7 +341,7 @@ def initialize_model(parameters,dataloaders_dict,device,num_classes, in_channels
                                     preprocess_layer=preprocess_layer)
     
     elif parameters['feature'] == 'DSA':
-        model_ft = NMNet(num_channels=in_channels, img_size=parameters["center_size"], num_classes=num_classes)
+        model_ft = NMNet(num_channels=in_channels, img_size=dataloaders_dict['img_size'], num_classes=num_classes)
         
     elif parameters['feature'] == 'MSDCNN':
         model_ft = MSDCNN(num_channels=in_channels, img_size=dataloaders_dict['img_size'], num_classes=num_classes)

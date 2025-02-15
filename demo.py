@@ -285,7 +285,7 @@ def parse_args():
                         help='Flag to use histogram model or baseline global average pooling (GAP), --no-histogram (GAP) or --histogram')
     parser.add_argument('--data_selection', type=int, default=1, # Data Config
                         help='Dataset selection: See Demo_Parameters for full list of datasets')
-    parser.add_argument('--numBins', type=int, default=256, # Reduced to accomodate memory
+    parser.add_argument('--numBins', type=int, default=16, # Reduced to accomodate memory
                         help='Number of bins for histogram layer. Recommended values are 4, 8 and 16. (default: 256)')
     parser.add_argument('--angle_res', type=int, default=45,
                         help='Number of angle resolutions (controls number of bins). Recommended value is 45 for 8 edge orientations (default: 45)')
@@ -303,7 +303,7 @@ def parse_args():
                         help='input batch size for validation (default: 512)')
     parser.add_argument('--test_batch_size', type=int, default=256, # Reduced to accomodate memory
                         help='input batch size for testing (default: 256)')
-    parser.add_argument('--num_epochs', type=int, default=50, 
+    parser.add_argument('--num_epochs', type=int, default=100, 
                         help='Number of epochs to train each model for (default: 50)')
     parser.add_argument('--resize_size', type=int, default=128,
                         help='Resize the image before center crop. (default: 128)')
@@ -311,7 +311,7 @@ def parse_args():
                         help='Center crop size. (default: 112)')
     parser.add_argument('--stride', type=int, default=1,
                         help='Stride for histogram feature. (default: 1)')
-    parser.add_argument('--num_workers', type=int, default=0, ################
+    parser.add_argument('--num_workers', type=int, default=3, ################
                         help='Number of workers for dataloader. (default: 1)')
     parser.add_argument('--lr', type=float, default=0.001, 
                         help='learning rate (default: 0.001)')
