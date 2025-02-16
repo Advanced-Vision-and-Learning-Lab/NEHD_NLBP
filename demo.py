@@ -303,7 +303,7 @@ def parse_args():
                         help='input batch size for validation (default: 512)')
     parser.add_argument('--test_batch_size', type=int, default=256, # Reduced to accomodate memory
                         help='input batch size for testing (default: 256)')
-    parser.add_argument('--num_epochs', type=int, default=50, 
+    parser.add_argument('--num_epochs', type=int, default=100, 
                         help='Number of epochs to train each model for (default: 50)')
     parser.add_argument('--resize_size', type=int, default=128,
                         help='Resize the image before center crop. (default: 128)')
@@ -311,7 +311,7 @@ def parse_args():
                         help='Center crop size. (default: 112)')
     parser.add_argument('--stride', type=int, default=1,
                         help='Stride for histogram feature. (default: 1)')
-    parser.add_argument('--num_workers', type=int, default=0, ################
+    parser.add_argument('--num_workers', type=int, default=3, ################
                         help='Number of workers for dataloader. (default: 1)')
     parser.add_argument('--lr', type=float, default=0.001, 
                         help='learning rate (default: 0.001)')
