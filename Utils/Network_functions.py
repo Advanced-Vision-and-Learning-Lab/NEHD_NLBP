@@ -42,7 +42,7 @@ plt.ioff()
 
 def train_model(model, dataloaders, criterion, optimizer, device,parameters, 
                           split,saved_bins=None, saved_widths=None,histogram=True,
-                          num_epochs=25,scheduler=None,num_params=0):
+                          num_epochs=100,scheduler=None,num_params=0):
     since = time.time()
 
     val_acc_history = []
@@ -51,7 +51,7 @@ def train_model(model, dataloaders, criterion, optimizer, device,parameters,
     val_error_history = []
     epoch_weights = []
     best_epoch = 0
-    early_stopping = EarlyStopping(patience=20, verbose=True)
+    early_stopping = EarlyStopping(patience=100, verbose=True)
 
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0

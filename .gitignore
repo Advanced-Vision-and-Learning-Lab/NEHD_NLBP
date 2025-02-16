@@ -1,5 +1,6 @@
 Datasets/FashionMNIST/
 Datasets/PRMI/
+Datasets/*
 Datasets/BloodMNIST/
 Datasets/__pycache__
 __pycache__

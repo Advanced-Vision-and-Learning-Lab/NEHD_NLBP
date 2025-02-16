@@ -41,7 +41,7 @@ def generate_filename(Network_parameters,split):
             
             #Removed params settings due to long filename
         
-            filename = '{}/{}/{}/{}_{}_{}/{}_init_{}/Run_{}/'.format(Network_parameters['folder'],
+            filename = '{}/{}/{}/{}_{}_{}/init_{}/Run_{}/'.format(Network_parameters['folder'],
                                          Network_parameters['feature'],
                                          Network_parameters['hist_model'],
                                          Network_parameters['fusion_method'],

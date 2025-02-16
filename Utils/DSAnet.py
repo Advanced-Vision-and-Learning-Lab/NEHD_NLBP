@@ -33,7 +33,7 @@ class NMNet(nn.Module):
         self.flatten = nn.Flatten()
         
         #Hard coded for FashionMNIST
-        self.fc1 = nn.Linear(432,420)
+        self.fc1 = nn.Linear(8748,420)
         
         #self.fc1 = nn.Linear(12 * ((img_size // 4) ** 2), 420)
         self.dropout = nn.Dropout(0.6)
