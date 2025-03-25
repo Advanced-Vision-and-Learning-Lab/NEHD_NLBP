@@ -83,7 +83,6 @@ comparison_results = compare_models(models, input_size)
 for result in comparison_results:
     print(f"Model: {result['Model']}")
     print(f"  - Total Parameters: {result['Total Parameters']}")
-    # print(f"  - FLOPs (M): {result['Total FLOPs (M)']:.2f}")
     print(f"  - FLOPs: {result['Total FLOPs']:.2f}")
     print(f"  - Memory Usage (MB): {result['Memory Usage (MB)']:.2f}")
     print(f"  - Estimated Complexity: {result['Estimated Complexity']}")

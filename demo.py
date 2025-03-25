@@ -92,9 +92,6 @@ def main(args,params):
         #Check for base model
         if setting_count == (len(settings) - 1):
             Network_parameters['histogram'] = False
-        
-        #Name of dataset
-        # Dataset = Network_parameters['Dataset']
                                          
         #Number of runs and/or splits for dataset
         numRuns = Network_parameters['Splits'][Dataset]
@@ -103,8 +100,8 @@ def main(args,params):
         num_feature_maps = Network_parameters['out_channels']
         
         # Detect if we have a GPU available
-        #if torch.cuda.is_available():
-        #    device = torch.device("cuda")
+        if torch.cuda.is_available():
+           device = torch.device("cuda")
         if torch.backends.mps.is_available():
             device = torch.device("mps")
         else:
@@ -119,13 +116,7 @@ def main(args,params):
             torch.cuda.manual_seed_all(split)
             print("Initializing Datasets and Dataloaders...")
             
-            # Create training and validation dataloaders
-            #dataloaders_dict = Prepare_DataLoaders(Network_parameters,split,
-            #                                   mean=Network_parameters['mean'][Dataset],
-            #                                   std=Network_parameters['std'][Dataset])
-            
-            #Keep track of the bins and widths as these values are updated each
-            #epoch ##########
+            #Keep track of the bins and widths as these values are updated each epoch 
             if (Network_parameters['learn_transform'] or Network_parameters['feature'] == 'LBP'):
                 saved_bins = np.zeros((Network_parameters['num_epochs']+1, int(Network_parameters['in_channels']) *int(num_feature_maps)))
                 saved_widths =  np.zeros((Network_parameters['num_epochs']+1,int(Network_parameters['in_channels']) * int(num_feature_maps)))
@@ -146,7 +137,7 @@ def main(args,params):
                                                 normalize_count=Network_parameters['normalize_count'],
                                                 normalize_bins=Network_parameters['normalize_bins'],
                                                 LBP_init=Network_parameters['feature_init'],
-                                                learn_base = Network_parameters['learn_transform'], ###
+                                                learn_base = Network_parameters['learn_transform'],
                                                 learn_hist = Network_parameters['learn_hist'],
                                                 normalize_kernel=Network_parameters['normalize_kernel'],
                                                 dilation=Network_parameters['dilation'],
@@ -183,12 +174,6 @@ def main(args,params):
                                         reconstruction=Network_parameters['reconstruction'], 
                                         in_channels=Network_parameters['in_channels'],
                                         histogram_layer=histogram_layer, fusion_method=Network_parameters['fusion_method'])
-            
-            if Network_parameters['Parallelize_model'] and False:
-                if torch.cuda.device_count() > 1:
-                  print("Using", torch.cuda.device_count(), "GPUs!")
-                  # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
-                  model_ft = nn.DataParallel(model_ft)
     
             # Send the model to GPU if available
             model_ft = model_ft.to(device)
@@ -312,7 +297,7 @@ def parse_args():
                         help='Center crop size. (default: 112)')
     parser.add_argument('--stride', type=int, default=1,
                         help='Stride for histogram feature. (default: 1)')
-    parser.add_argument('--num_workers', type=int, default=3, ################
+    parser.add_argument('--num_workers', type=int, default=3,
                         help='Number of workers for dataloader. (default: 1)')
     parser.add_argument('--lr', type=float, default=0.001, 
                         help='learning rate (default: 0.001)')

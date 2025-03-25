@@ -249,7 +249,7 @@ def main(args, params):
                                   sub_dir)
 
                 
-            print("Done!") ###
+            print("Done!")
             
             # Confusion Matrix
             np.set_printoptions(precision=2)
@@ -353,7 +353,7 @@ def parse_args():
                         help='Center crop size. (default: 112)')
     parser.add_argument('--stride', type=int, default=1,
                         help='Stride for histogram feature. (default: 1)')
-    parser.add_argument('--num_workers', type=int, default=0, ########
+    parser.add_argument('--num_workers', type=int, default=3, 
                         help='Number of workers for dataloader. (default: 1)')
     parser.add_argument('--lr', type=float, default=.01, # Increased to accomodate speed
                         help='learning rate (default: 0.001)')

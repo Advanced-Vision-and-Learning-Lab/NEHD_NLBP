@@ -134,8 +134,6 @@ def train_model(model, dataloaders, criterion, optimizer, device,parameters,
                         loss = criterion(outputs,labels.long())
                         _, preds = torch.max(outputs, 1)
                  
-                    if torch.isnan(loss):
-                      pdb.set_trace()
                     # backward + optimize only if in training phase
                     if phase == 'train':
                         if num_params==0:
