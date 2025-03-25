@@ -64,10 +64,9 @@ def main(args,params):
     # Create training and validation dataloaders
     dataloaders_dict = Prepare_DataLoaders(data_parameters)
 
-    
 
     settings_params_dict = {}
-    for setting in settings[setting_count:]: 
+    for setting in settings: 
 
         #Set initial parameters
         if mode == 'config':
@@ -89,9 +88,6 @@ def main(args,params):
         #Check for base model
         if setting_count == (len(settings) - 1):
             Network_parameters['histogram'] = False
-        
-        #Name of dataset
-        # Dataset = Network_parameters['Dataset']
                                          
         #Number of runs and/or splits for dataset
         numRuns = Network_parameters['Splits'][Dataset]
@@ -101,8 +97,8 @@ def main(args,params):
         
         # Detect if we have a GPU available
         if torch.cuda.is_available():
-            device = torch.device("cuda")
-        elif torch.backends.mps.is_available():
+           device = torch.device("cuda")
+        if torch.backends.mps.is_available():
             device = torch.device("mps")
         else:
             device = torch.device("cpu")
@@ -116,13 +112,7 @@ def main(args,params):
             torch.cuda.manual_seed_all(split)
             print("Initializing Datasets and Dataloaders...")
             
-            # Create training and validation dataloaders
-            #dataloaders_dict = Prepare_DataLoaders(Network_parameters,split,
-            #                                   mean=Network_parameters['mean'][Dataset],
-            #                                   std=Network_parameters['std'][Dataset])
-            
-            #Keep track of the bins and widths as these values are updated each
-            #epoch ##########
+            #Keep track of the bins and widths as these values are updated each epoch 
             if (Network_parameters['learn_transform'] or Network_parameters['feature'] == 'LBP'):
                 saved_bins = np.zeros((Network_parameters['num_epochs']+1, int(Network_parameters['in_channels']) *int(num_feature_maps)))
                 saved_widths =  np.zeros((Network_parameters['num_epochs']+1,int(Network_parameters['in_channels']) * int(num_feature_maps)))
@@ -143,7 +133,7 @@ def main(args,params):
                                                 normalize_count=Network_parameters['normalize_count'],
                                                 normalize_bins=Network_parameters['normalize_bins'],
                                                 LBP_init=Network_parameters['feature_init'],
-                                                learn_base = Network_parameters['learn_transform'], ###
+                                                learn_base = Network_parameters['learn_transform'],
                                                 learn_hist = Network_parameters['learn_hist'],
                                                 normalize_kernel=Network_parameters['normalize_kernel'],
                                                 dilation=Network_parameters['dilation'],
@@ -166,7 +156,8 @@ def main(args,params):
                                               threshold=Network_parameters['threshold'],
                                               angle_res=Network_parameters['angle_res'],
                                               normalize_kernel=Network_parameters['normalize_kernel'],
-                                              aggregation_type=Network_parameters['aggregation_type'])
+                                              aggregation_type=Network_parameters['aggregation_type'],
+                                              dilation=Network_parameters['dilation'])
                 else:
                     raise RuntimeError('Invalid type for histogram layer')
             else:
@@ -282,7 +273,7 @@ def parse_args():
                         help='Flag to use histogram model or baseline global average pooling (GAP), --no-histogram (GAP) or --histogram')
     parser.add_argument('--data_selection', type=int, default=1, # Data Config
                         help='Dataset selection: See Demo_Parameters for full list of datasets')
-    parser.add_argument('--numBins', type=int, default=256, # Reduced to accomodate memory
+    parser.add_argument('--numBins', type=int, default=16, # Reduced to accomodate memory
                         help='Number of bins for histogram layer. Recommended values are 4, 8 and 16. (default: 256)')
     parser.add_argument('--angle_res', type=int, default=45,
                         help='Number of angle resolutions (controls number of bins). Recommended value is 45 for 8 edge orientations (default: 45)')
@@ -300,7 +291,7 @@ def parse_args():
                         help='input batch size for validation (default: 512)')
     parser.add_argument('--test_batch_size', type=int, default=256, # Reduced to accomodate memory
                         help='input batch size for testing (default: 256)')
-    parser.add_argument('--num_epochs', type=int, default=50, 
+    parser.add_argument('--num_epochs', type=int, default=100, 
                         help='Number of epochs to train each model for (default: 50)')
     parser.add_argument('--resize_size', type=int, default=128,
                         help='Resize the image before center crop. (default: 128)')
@@ -308,9 +299,9 @@ def parse_args():
                         help='Center crop size. (default: 112)')
     parser.add_argument('--stride', type=int, default=1,
                         help='Stride for histogram feature. (default: 1)')
-    parser.add_argument('--num_workers', type=int, default=0, ################
+    parser.add_argument('--num_workers', type=int, default=3,
                         help='Number of workers for dataloader. (default: 1)')
-    parser.add_argument('--lr', type=float, default=0.001, # Increased to accomodate speed
+    parser.add_argument('--lr', type=float, default=0.001, 
                         help='learning rate (default: 0.001)')
     parser.add_argument('--use-cuda', default=True, action=argparse.BooleanOptionalAction,
                         help='enables CUDA training')
@@ -320,8 +311,14 @@ def parse_args():
                         help='Setting min is 0 and max is 16')
     parser.add_argument('--fusion_method', type=str, default=None,
                         help='Fusion method for n>1 channels (default: None); Options: None, grayscale, conv')
-    parser.add_argument('--single_setting', default=False, action=argparse.BooleanOptionalAction,
+    parser.add_argument('--single_setting', default=True, action=argparse.BooleanOptionalAction,
                         help='Run a single setting')
+    parser.add_argument('--kernel_size', nargs='+', type=int, default=[3, 3],
+                        help='Mask size controls structural hyper param')
+    parser.add_argument('--window_size', nargs='+', type=int, default=[5, 5],
+                        help='Controls the aggregation kernel hyper param')
+    parser.add_argument('--dilation', default=1, type=int,
+                        help='control lbp structural')
     args = parser.parse_args()
     return args
 
@@ -334,5 +331,8 @@ if __name__ == "__main__":
     else:
         device = torch.device("cpu")
     print('Using device: {}'.format(device))
-    params = Parameters(args)
+    
+    args.kernel_size = list(args.kernel_size)
+    args.window_size = list(args.window_size)
+    params = Parameters(args, mask_size=args.kernel_size)
     main(args,params)

@@ -29,7 +29,7 @@ from Prepare_Data import Prepare_DataLoaders
 from Utils.Confusion_mats import plot_confusion_matrix,plot_avg_confusion_matrix
 from Utils.Generate_Learning_Curves import Plot_Learning_Curves
 from Demo_Parameters import Parameters
-from Utils.Crisp_Histogram_visual import Generate_Histogram_visual
+#from Utils.Crisp_Histogram_visual import Generate_Histogram_visual
 from Utils.Save_Results import generate_filename
 from Utils.NLBP import NLBPLayer
 from Utils.NEHD import NEHDLayer
@@ -71,9 +71,8 @@ def main(args, params):
     single_setting = args.single_setting
     TSNE_visual = args.TSNE_visual
     #Append base model (histogram_layer = None)
-    settings.append(settings[-1])
-    
-    for setting in settings[setting_count:]: 
+    settings_params_dict = {}
+    for setting in settings: 
     
         #Set initial parameters
         if mode == 'config':
@@ -246,7 +245,7 @@ def main(args, params):
                                   sub_dir)
 
                 
-            print("Done!") ###
+            print("Done!")
             
             # Confusion Matrix
             np.set_printoptions(precision=2)
@@ -350,7 +349,7 @@ def parse_args():
                         help='Center crop size. (default: 112)')
     parser.add_argument('--stride', type=int, default=1,
                         help='Stride for histogram feature. (default: 1)')
-    parser.add_argument('--num_workers', type=int, default=0, ########
+    parser.add_argument('--num_workers', type=int, default=3, 
                         help='Number of workers for dataloader. (default: 1)')
     parser.add_argument('--lr', type=float, default=.01, # Increased to accomodate speed
                         help='learning rate (default: 0.001)')
@@ -366,6 +365,12 @@ def parse_args():
                         help='Run a single setting')
     parser.add_argument('--TSNE_visual', default=False, action=argparse.BooleanOptionalAction,
                         help='Generates the TSNE visual')
+    parser.add_argument('--kernel_size', nargs='+', type=int, default=[3, 3],
+                        help='Mask size controls structural hyper param')
+    parser.add_argument('--window_size', nargs='+', type=int, default=[5, 5],
+                        help='Controls the aggregation kernel hyper param')
+    parser.add_argument('--dilation', default=1, type=int,
+                        help='control lbp structural')
     args = parser.parse_args()
     return args
 
@@ -373,5 +378,7 @@ if __name__ == "__main__":
     args = parse_args()
     use_cuda = args.use_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
-    params = Parameters(args)
+    args.kernel_size = list(args.kernel_size)
+    args.window_size = list(args.window_size)
+    params = Parameters(args, mask_size=args.kernel_size)
     main(args,params)

@@ -34,7 +34,7 @@ def get_feat_size(parameters, dataloaders, preprocess_layer = None, histogram_la
             out_size = parameters['out_channels'] * parameters['in_channels']
             # Converting input to single channel. Output will be only number of bins
             # May possibly compute LBP for each channel independently
-            out_size = parameters['out_channels'] * parameters['in_channels'] ## May cause issues with conv, going to have to look into it
+            out_size = parameters['out_channels'] * parameters['in_channels']
             
             return out_size
             
@@ -53,6 +53,10 @@ def get_feat_size(parameters, dataloaders, preprocess_layer = None, histogram_la
                                       angle_res=parameters['angle_res'],
                                       normalize_kernel=parameters['normalize_kernel'],
                                       aggregation_type=parameters['aggregation_type'])
+        
+        elif parameters['feature'] in ["DSA","MSDCNN"]:
+            out_size = 0
+            return out_size
         else:
             raise RuntimeError('Invalid type for histogram layer')
         
