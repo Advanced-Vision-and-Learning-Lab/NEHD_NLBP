@@ -14,6 +14,10 @@ from torchvision import datasets
 import torchvision.transforms as T
 import ssl
     
+
+ssl._create_default_https_context = ssl._create_unverified_context
+
+
 class FashionMNIST_Index(Dataset):
     def __init__(self,directory,transform=None,train=True,download=True):  
         

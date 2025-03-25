@@ -53,6 +53,10 @@ def get_feat_size(parameters, dataloaders, preprocess_layer = None, histogram_la
                                       angle_res=parameters['angle_res'],
                                       normalize_kernel=parameters['normalize_kernel'],
                                       aggregation_type=parameters['aggregation_type'])
+        
+        elif parameters['feature'] in ["DSA","MSDCNN"]:
+            out_size = 0
+            return out_size
         else:
             raise RuntimeError('Invalid type for histogram layer')
         

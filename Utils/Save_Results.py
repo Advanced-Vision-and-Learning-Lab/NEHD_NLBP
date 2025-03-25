@@ -15,35 +15,43 @@ import torch
 
 def generate_filename(Network_parameters,split):
     
+    if Network_parameters['feature'] in ['DSA', 'MSDCNN']:
+    	filename = f"{Network_parameters['folder']}/{Network_parameters['feature']}/{Network_parameters['Dataset']}/Run_{str(split + 1)}"
+    	if not os.path.exists(filename):
+                try:
+                	os.makedirs(filename)
+                except:
+                	pass
+    	return filename
+
     if Network_parameters['feature'] == 'EHD':
         if Network_parameters['learn_transform']:
-            transform = 'Conv_No_Edge'
+            transform = 'Conv'
         else:
-            transform = 'Thres_No_Edge'
-    else:
+            transform = 'Thresh'
+    elif Network_parameters['feature'] == 'LBP':
         if Network_parameters['learn_transform']:
-            transform = 'Learn_Base'
+            transform = 'Learn'
         else:
-            transform = 'Fixed_Base'
-        
+            transform = 'Fixed'
+	    
         
     if(Network_parameters['histogram']):
         if(Network_parameters['feature_init']):
+            
+            #Removed params settings due to long filename
         
-            filename = '{}/{}/{}/{}/{}_{}_{}/{}_init_{}/Run_{}/'.format(Network_parameters['folder'],
+            filename = '{}/{}/{}/{}_{}_{}/init_{}/Run_{}/'.format(Network_parameters['folder'],
                                          Network_parameters['feature'],
-                                         Network_parameters['Dataset'],
-                                         Network_parameters['params_settings'],
                                          Network_parameters['hist_model'],
                                          Network_parameters['fusion_method'],
                                          Network_parameters['aggregation_type'],
                                          Network_parameters['feature'],
                                          transform,str(split + 1))
         else:
-            filename = '{}/{}/{}/{}/{}_{}_{}/Rand_init_{}/Run_{}/'.format(Network_parameters['folder'],
+            filename = '{}/{}/{}/{}_{}_{}/Rand_init_{}/Run_{}/'.format(Network_parameters['folder'],
                                        Network_parameters['feature'],
                                        Network_parameters['Dataset'],
-                                       Network_parameters['params_settings'],
                                        Network_parameters['hist_model'],
                                        Network_parameters['fusion_method'],
                                        Network_parameters['aggregation_type'],

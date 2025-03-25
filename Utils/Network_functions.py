@@ -35,11 +35,14 @@ from Utils.Generate_Plots import *
 from .pytorchtools import EarlyStopping
 import pdb
 
+from Utils.DSAnet import NMNet
+from Utils.MSDCNN import MSDCNN
+
 plt.ioff()
 
 def train_model(model, dataloaders, criterion, optimizer, device,parameters, 
                           split,saved_bins=None, saved_widths=None,histogram=True,
-                          num_epochs=25,scheduler=None,num_params=0):
+                          num_epochs=100,scheduler=None,num_params=0):
     since = time.time()
 
     val_acc_history = []
@@ -48,7 +51,7 @@ def train_model(model, dataloaders, criterion, optimizer, device,parameters,
     val_error_history = []
     epoch_weights = []
     best_epoch = 0
-    early_stopping = EarlyStopping(patience=20, verbose=True)
+    early_stopping = EarlyStopping(patience=100, verbose=True)
 
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
@@ -331,11 +334,17 @@ def initialize_model(parameters,dataloaders_dict,device,num_classes, in_channels
     num_ftrs = get_feat_size(parameters, dataloaders_dict, preprocess_layer= preprocess_layer,
                              histogram_layer=histogram_layer)
 
-    if histogram_layer is not None:
+    if histogram_layer is not None and parameters["feature"] in ["EHD", "LBP"]:
 
         model_ft = HistogramNetwork(histogram_layer,num_ftrs,num_classes,
                                     reconstruction=reconstruction, 
                                     preprocess_layer=preprocess_layer)
+    
+    elif parameters['feature'] == 'DSA':
+        model_ft = NMNet(num_channels=in_channels, img_size=dataloaders_dict['img_size'], num_classes=num_classes)
+        
+    elif parameters['feature'] == 'MSDCNN':
+        model_ft = MSDCNN(num_channels=in_channels, img_size=dataloaders_dict['img_size'], num_classes=num_classes)
     # Baseline model
     else:
         if parameters['feature'] == 'EHD': 

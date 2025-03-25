@@ -1,6 +1,8 @@
 Datasets/FashionMNIST/
 Datasets/PRMI/
+Datasets/*
 Datasets/BloodMNIST/
 Datasets/__pycache__
 __pycache__
 Saved_Models/
+venv/
