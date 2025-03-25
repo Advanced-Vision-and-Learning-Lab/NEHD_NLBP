@@ -170,7 +170,7 @@ def main(args,params):
                                               angle_res=Network_parameters['angle_res'],
                                               normalize_kernel=Network_parameters['normalize_kernel'],
                                               aggregation_type=Network_parameters['aggregation_type'],
-				              dilation=Network_parameters['dilation'])
+				                              dilation=Network_parameters['dilation'])
                 else:
                     raise RuntimeError('Invalid type for histogram layer')
             else:
@@ -314,7 +314,7 @@ def parse_args():
                         help='Stride for histogram feature. (default: 1)')
     parser.add_argument('--num_workers', type=int, default=3, ################
                         help='Number of workers for dataloader. (default: 1)')
-    parser.add_argument('--lr', type=float, default=0.01,
+    parser.add_argument('--lr', type=float, default=0.001,
                         help='learning rate (default: 0.01)')
     parser.add_argument('--use-cuda', default=True, action=argparse.BooleanOptionalAction,
                         help='enables CUDA training')

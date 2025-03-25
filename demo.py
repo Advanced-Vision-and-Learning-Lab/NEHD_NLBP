@@ -169,7 +169,8 @@ def main(args,params):
                                               threshold=Network_parameters['threshold'],
                                               angle_res=Network_parameters['angle_res'],
                                               normalize_kernel=Network_parameters['normalize_kernel'],
-                                              aggregation_type=Network_parameters['aggregation_type'])
+                                              aggregation_type=Network_parameters['aggregation_type'],
+                                              dilation=Network_parameters['dilation'])
                 else:
                     raise RuntimeError('Invalid type for histogram layer')
             else:
@@ -332,7 +333,6 @@ def parse_args():
     parser.add_argument('--dilation', default=1, type=int,
                         help='control lbp structural')
     args = parser.parse_args()
-    print('got args')
     return args
 
 if __name__ == "__main__":
